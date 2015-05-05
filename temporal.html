@@ -27,9 +27,27 @@
         padding:0;
       }
 
+      #slider-container {
+        position: absolute;
+        bottom: 10px;
+        left: 20px;
+        width: 500px;
+      }
+
+      #slider {
+        width:100%;
+      }
+
+      .date {
+        font-size:1.5em;
+      }
+
     </style>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.2/moment.min.js"></script>
     <script src="//js.arcgis.com/3.12compact/"></script>
+    <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+    
     <script>
       var map, rasterLayer;
       var canvasSupport;
@@ -59,19 +77,44 @@
 
           // Add raster layer
           if ( canvasSupport ) {
-            layer = new TileCubeLayer('tiles/{level}/{col}/{row}.json', {
+            layer = new TileCubeLayer('/tiles/{level}/{col}/{row}.json', {
               tileType: 'canvas',
               hidpi: false, 
               temporal: false,
+              startTime: 700,
               styles: { 
               }
             });
             map.addLayer(layer);
             
+            var endDate = moment('JAN 01, 1950').add(700, 'days').format('MMM DD, YYYY');
+            $('#end-date').html(endDate);
+
           } else {
             dom.byId("mapCanvas").innerHTML = "This browser doesn't support canvas. Visit <a target='_blank' href='http://www.caniuse.com/#search=canvas'>caniuse.com</a> for supported browsers";
           }
         }
+
+
+        //slider events 
+        $('#slider').on('change', function(e) {
+          var val = parseInt($(e.target).val());
+          layer.timeIndex = val;
+          
+          var endDate = moment('JAN 01, 1950').add(val, 'days').format('MMM DD, YYYY');
+          $('#end-date').html(endDate);
+          
+          layer._update();
+        });
+
+        //slider events 
+        $('#slider').on('input', function(e) {
+          var val = parseInt($(e.target).val());
+          
+          var endDate = moment('JAN 01, 1950').add(val, 'days').format('MMM DD, YYYY');
+          $('#end-date').html(endDate);
+          
+        });
 
         // does the browser support canvas? 
         function supports_canvas() {
@@ -83,7 +126,13 @@
   </head>
   
   <body class="">
-     <div id="mapCanvas" style="height:100%;">
+     <div id="mapCanvas" style="height:100%;"></div>
+     <div id="slider-container">
+        <div>Tornado Touchdowns</div>
+        <div id="date-range">
+          <span class="date" id="start-date">Jan 01, 1950</span> to <span class="date" id="end-date"></span>
+        </div>
+        <input id="slider" type="range" value="500" min="0" max="22000" step="1" />
      </div>
      <script src="vendor/hidpi-canvas.min.js"></script>
   </body>
