@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title></title>
+
+    <link rel="stylesheet" href="//js.arcgis.com/3.8/js/esri/css/esri.css">
+    <script>
+      var dojoConfig = {
+        paths: {
+          plugins: location.pathname.replace(/\/[^/]+$/, "") + "/plugins",
+          queue: "http://d3js.org/queue.v1.min"
+        }
+      };
+    </script>
+
+    <style>
+      html,body {
+        width:100%;
+        height:100%;
+        margin: 0;
+        padding: 0px 0 0 0;
+      }
+
+      #mapCanvas {
+        padding:0;
+      }
+
+    </style>
+
+    <script src="//js.arcgis.com/3.12compact/"></script>
+    <script>
+      var map, rasterLayer;
+      var canvasSupport;
+
+      require([
+        "esri/map", 
+        "dojo/dom", 
+        "plugins/TileCubeLayer",
+        "dojo/domReady!"
+      ], function(
+        Map, 
+        dom, 
+        TileCubeLayer 
+      ){
+        // does the browser support canvas? 
+        canvasSupport = supports_canvas();
+        
+        map = new Map("mapCanvas", {
+          center: [-99.076, 38.132],
+          zoom: 4,
+          basemap: "gray"
+        });
+
+        map.on("load", mapLoaded);
+
+        function mapLoaded() {
+
+          // Add raster layer
+          if ( canvasSupport ) {
+            layer = new TileCubeLayer('/tiles/{level}/{col}/{row}.json', {
+              tileType: 'canvas',
+              hidpi: false, 
+              styles: { 
+              }
+            });
+            map.addLayer(layer);
+            
+          } else {
+            dom.byId("mapCanvas").innerHTML = "This browser doesn't support canvas. Visit <a target='_blank' href='http://www.caniuse.com/#search=canvas'>caniuse.com</a> for supported browsers";
+          }
+        }
+
+        // does the browser support canvas? 
+        function supports_canvas() {
+          return !!document.createElement("canvas").getContext;
+        }
+
+      });
+    </script>
+  </head>
+  
+  <body class="">
+     <div id="mapCanvas" style="height:100%;">
+     </div>
+     <script src="vendor/hidpi-canvas.min.js"></script>
+  </body>
+
+</html>
