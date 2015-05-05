@@ -64,10 +64,7 @@ var PbfTileLayer = declare(VectorTileLayer, {
               }, 25);
             }, id);
            // for saving data, store the tile and layers
-           // self._tileData[id] = {
-           //   layers: layers,
-           //   tile: tile
-           // }
+           self._tileData[id] = tileJson;
             //self._render(element, tile, id, function(){
             //});
           } catch(e){
