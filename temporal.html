@@ -67,7 +67,7 @@
         
         map = new Map("mapCanvas", {
           center: [-99.076, 38.132],
-          zoom: 4,
+          zoom: 5,
           basemap: "gray"
         });
 
@@ -80,9 +80,36 @@
             layer = new TileCubeLayer('/tiles/{level}/{col}/{row}.json', {
               tileType: 'canvas',
               hidpi: false, 
-              temporal: false,
+              temporal: true,
               startTime: 700,
-              styles: { 
+              style: function(val) {
+                var color;
+                switch(true) {
+                  case val === 0:
+                    color ='rgb(255,255,178)';
+                    break;
+                  case val === 1:
+                    color ='rgb(254,217,118)';
+                    break;
+                  case val === 2:
+                    color ='rgb(254,178,76)';
+                    break;
+                  case val === 3:
+                    color ='rgb(253,141,60)';
+                    break;
+                  case val === 4:
+                    color ='rgb(240,59,32)';
+                    break;
+                  case val === 5:
+                    color ='rgb(189,0,38)';
+                    break;
+                  default:
+                    color ='rgb(250,250,250)';
+                }
+                return {
+                  fillStyle: color,
+                  radius: val
+                }; 
               }
             });
             map.addLayer(layer);
@@ -96,15 +123,27 @@
         }
 
 
-        //slider events 
+        // slider events
+        var timer; 
+
         $('#slider').on('change', function(e) {
-          var val = parseInt($(e.target).val());
-          layer.timeIndex = val;
+
+          console.log('change')
+          /*if (timer) {
+            clearTimeout(timer);
+          }
+
+          timer = setTimeout(function(){*/
+
+            var val = parseInt($(e.target).val());
+            layer.timeIndex = val;
           
-          var endDate = moment('JAN 01, 1950').add(val, 'days').format('MMM DD, YYYY');
-          $('#end-date').html(endDate);
+            var endDate = moment('JAN 01, 1950').add(val, 'days').format('MMM DD, YYYY');
+            $('#end-date').html(endDate);
           
-          layer._update();
+            layer._update();
+            //timer = null;
+          //},500);
         });
 
         //slider events 
