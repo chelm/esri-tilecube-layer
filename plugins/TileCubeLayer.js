@@ -170,6 +170,7 @@ var PbfTileLayer = declare(VectorTileLayer, {
 
   _renderPoint: function(point, context, tileid){
     
+    //todo remove this logic from layer rendering
     var stylePoint = function(val) {
       var color;
       switch(true) {
