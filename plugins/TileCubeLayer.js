@@ -137,7 +137,7 @@ var PbfTileLayer = declare(VectorTileLayer, {
 
     if ( this.temporal === true ) {
       var time = self.timeIndex;
-      console.time('loop and render point');
+      //console.time('loop and render point');
       for (var t = 0; t < time; t++){
         if ( tile[t] ) {
           for (var i = 0; i < tile[t].length; i++){
@@ -145,7 +145,7 @@ var PbfTileLayer = declare(VectorTileLayer, {
           }
         }
       }
-      console.timeEnd('loop and render point');
+      //console.timeEnd('loop and render point');
     } else {
       
       for (var time in tile){
@@ -159,31 +159,41 @@ var PbfTileLayer = declare(VectorTileLayer, {
   },
 
   _renderPoint: function(point, context){
-    //console.log('render', point)
-    var x = point.x;
-    var y = point.y;
 
     if ( !this.sprites[point.v] ) {
       this._generateSprite(point);
     }
-    
-    //console.log('xy', x,y);
-    context.drawImage(this.sprites[point.v], x, y);
+
+    var x = point.x;
+    var y = point.y;
+    if ( this.hidpi ) {
+      x *= 2;
+      y *= 2;
+    }
+
+    var xOff = this.sprites[point.v].width/2;
+    var yOff = this.sprites[point.v].height/2;
+    context.drawImage(this.sprites[point.v], x-xOff, y-yOff);    
+
   },
 
   _generateSprite: function(point) {
     //console.log('ok', point.v)
     var style = this.style(parseInt(point.v));
     var canvas = document.createElement('canvas');
-    canvas.width = 10;
-    canvas.height = 10;
+    canvas.width = style.radius*2;
+    canvas.height = style.radius*2;
+    if (this.hidpi) {
+      canvas.width *= window.devicePixelRatio;
+      canvas.height *= window.devicePixelRatio;
+    }
     var context = canvas.getContext('2d');
-    var centerX = canvas.width / 2;
-    var centerY = canvas.height / 2;
-    var radius = 5;
+    //var centerX = canvas.width / 2;
+    //var centerY = canvas.height / 2;
+    var r = style.radius;
 
     context.beginPath();
-    context.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
+    context.arc(r, r, r, 0, 2 * Math.PI, false);
     context.fillStyle = style.fillStyle || 'rgb(100,100,125)';
     context.fill();
     context.lineWidth = style.lineWidth || 0.8;
@@ -191,7 +201,7 @@ var PbfTileLayer = declare(VectorTileLayer, {
     context.stroke();
     
     this.sprites[point.v] = canvas;
-    console.log('sprites', this.sprites);
+    //console.log('sprites', this.sprites);
   }
 
 

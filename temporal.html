@@ -79,7 +79,7 @@
           if ( canvasSupport ) {
             layer = new TileCubeLayer('/tiles/{level}/{col}/{row}.json', {
               tileType: 'canvas',
-              hidpi: true, 
+              hidpi: false, 
               temporal: true,
               startTime: 700,
               style: function(val) {
@@ -176,7 +176,7 @@
         </div>
         <input id="slider" type="range" value="500" min="0" max="22000" step="1" />
      </div>
-     <!--<script src="vendor/hidpi-canvas.min.js"></script>-->
+     <!--script src="vendor/hidpi-canvas.min.js"></script-->
   </body>
 
 </html>
