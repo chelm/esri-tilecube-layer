@@ -144,6 +144,7 @@ var VectorTileLayer = declare(TiledMapServiceLayer, {
     // object to save tile data, to reuse data
     this._tileData = {};
     this._tileDom = {};
+    this._tileDivs = {};
 
     this.loaded = true;
     this.onLoad(this);
@@ -183,6 +184,7 @@ var VectorTileLayer = declare(TiledMapServiceLayer, {
       dc = connection.connect;
 
     this._tiles[id] = this._tileDom[id] = canvas;
+    this._tileDivs[id] = this._div;
 
     canvas.id = id;
     domClass.add(canvas, "layerTile");
