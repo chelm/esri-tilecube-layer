@@ -136,12 +136,12 @@
           timer = setTimeout(function(){*/
 
             var val = parseInt($(e.target).val());
-            layer.timeIndex = val;
+            //layer.timeIndex = val;
           
             var endDate = moment('JAN 01, 1950').add(val, 'days').format('MMM DD, YYYY');
             $('#end-date').html(endDate);
           
-            layer._update();
+            //layer._update();
             //timer = null;
           //},500);
         });
@@ -152,6 +152,9 @@
           
           var endDate = moment('JAN 01, 1950').add(val, 'days').format('MMM DD, YYYY');
           $('#end-date').html(endDate);
+
+          layer.timeIndex = val;
+          layer._update();
           
         });
 
@@ -173,7 +176,7 @@
         </div>
         <input id="slider" type="range" value="500" min="0" max="22000" step="1" />
      </div>
-     <script src="vendor/hidpi-canvas.min.js"></script>
+     <!--<script src="vendor/hidpi-canvas.min.js"></script>-->
   </body>
 
 </html>
