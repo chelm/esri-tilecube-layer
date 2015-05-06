@@ -41,6 +41,8 @@ var PbfTileLayer = declare(VectorTileLayer, {
     this.temporal = (options.temporal === false) ? false : true;
     this.timeIndex = options.startTime || 10;
     this.style = options.style; 
+
+    this.sprites = {};
   },
 
   // override this method to create canvas elements instead of img
@@ -113,6 +115,7 @@ var PbfTileLayer = declare(VectorTileLayer, {
 
   _update: function( styles ){
     this.styles = styles;
+    this.sprites = {};
     for (var id in this._tileData){
       this._render( this._tileDom[id], this._tileData[id], function(){} );
     }
@@ -134,7 +137,7 @@ var PbfTileLayer = declare(VectorTileLayer, {
 
     if ( this.temporal === true ) {
       var time = self.timeIndex;
-
+      console.time('loop and render point');
       for (var t = 0; t < time; t++){
         if ( tile[t] ) {
           for (var i = 0; i < tile[t].length; i++){
@@ -142,7 +145,7 @@ var PbfTileLayer = declare(VectorTileLayer, {
           }
         }
       }
-
+      console.timeEnd('loop and render point');
     } else {
       
       for (var time in tile){
@@ -156,30 +159,39 @@ var PbfTileLayer = declare(VectorTileLayer, {
   },
 
   _renderPoint: function(point, context){
-    
-    //todo remove this logic from layer rendering
-    var style = this.style(parseInt(point.v));
-
-    context.lineWidth = style.lineWidth || 0.8;
-    context.fillStyle = style.fillStyle || 'rgb(100,100,125)';
-    context.strokeStyle = style.strokeStyle || 'rgb(240,240,240)';
-
+    //console.log('render', point)
     var x = point.x;
     var y = point.y;
-    /*var size = 256;
-    if ( this.hidpi ){
-      size = size * window.devicePixelRatio;
+
+    if ( !this.sprites[point.v] ) {
+      this._generateSprite(point);
     }
-    x = x/4096*size;
-    y = y/4096*size;
-    if ( this.hidpi ) {
-      x *= (1/window.devicePixelRatio);
-      y *= (1/window.devicePixelRatio);
-    }*/
+    
+    //console.log('xy', x,y);
+    context.drawImage(this.sprites[point.v], x, y);
+  },
+
+  _generateSprite: function(point) {
+    //console.log('ok', point.v)
+    var style = this.style(parseInt(point.v));
+    var canvas = document.createElement('canvas');
+    canvas.width = 10;
+    canvas.height = 10;
+    var context = canvas.getContext('2d');
+    var centerX = canvas.width / 2;
+    var centerY = canvas.height / 2;
+    var radius = 5;
+
     context.beginPath();
-    context.arc(x, y, (style.radius || 2), 0, 2 * Math.PI, true);
+    context.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
+    context.fillStyle = style.fillStyle || 'rgb(100,100,125)';
     context.fill();
+    context.lineWidth = style.lineWidth || 0.8;
+    context.strokeStyle = style.strokeStyle || 'rgb(240,240,240)';
     context.stroke();
+    
+    this.sprites[point.v] = canvas;
+    console.log('sprites', this.sprites);
   }
 
 
