@@ -34,7 +34,7 @@
         position: absolute;
         bottom: 10px;
         left: 20px;
-        width: 500px;
+        width: 600px;
       }
 
       #slider {
@@ -50,9 +50,57 @@
         overflow: hidden;
       }
       .leg-item {
-        float:left;
-        margin-right: 5px;
-        font-size: 0.75em;
+        float: left;
+        font-size: 0.7em;
+        background: #D2D2D2;
+        padding: 9px;
+        border-right: 1px solid #EEE;
+        padding-top: 1px;
+        padding-bottom: 1px;
+        text-align: center;
+        width:26px;
+      }
+      #histogram {
+        width:300px;
+        overflow: hidden;
+        position: relative;
+        height: 200px;
+      }
+      .hist-item {
+        width:26px;
+        position: absolute;
+        bottom:0px;
+        font-size: 0.7em;
+        background: #D2D2D2;
+        padding: 9px;
+        border-right: 1px solid #EEE;
+        padding-top: 1px;
+        padding-bottom: 1px;
+        text-align: center;
+      }
+      #hist-1 {
+        left:0px;
+        background:rgb(255,255,178);
+      }
+      #hist-2 {
+        left:45px;
+        background:rgb(254,217,118);
+      }
+      #hist-3 {
+        left:90px;
+        background:rgb(254,178,76);
+      }
+      #hist-4 {
+        left:135px;
+        background:rgb(253,141,60);
+      }
+      #hist-5 {
+        left:180px;
+        background:rgb(240,59,32);
+      }
+      #hist-6 {
+        left:225px;
+        background:rgb(189,0,38);
       }
       .leg-icon {
         border-radius: 20px;
@@ -88,6 +136,29 @@
       }
       #f5 {
         background:rgb(189,0,38);
+      }
+
+      .ui-widget-content .ui-state-hover, .ui-state-hover, .ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active, .ui-widget-header .ui-state-hover, .ui-widget-content .ui-state-focus, .ui-widget-header .ui-state-focus {
+        color:#555;
+        border: 1px solid #555;
+        background-color: #EEE;
+      }
+
+      .ui-widget-header {
+        background:#95a7b2;
+      }
+
+      .ui-slider-horizontal {
+        height: .3em;
+      }
+
+      .ui-slider .ui-slider-handle {
+        width: 0.6em;
+        height: 0.6em;
+      }
+
+      .ui-slider-horizontal .ui-slider-handle {
+        top: -0.2em;
       }
     </style>
 
@@ -162,13 +233,43 @@
                 }; 
               }
             });
+<<<<<<< HEAD
             layer.on("tiles-loaded", function(){
               console.log(layer);
             });
+=======
+  
+>>>>>>> building legend
             map.addLayer(layer);
-            
+
             var endDate = moment('JAN 01, 1950').add(4000, 'days').format('MMM DD, YYYY');
             $('#end-date').html(endDate);
+
+            console.log('preload..', layer);
+            layer.on('update-end', function() {
+              console.log('layer', layer);
+              var histogram = {};
+              setTimeout(function() {
+                var data = layer._tileData;
+                console.log('data', data);
+                for ( var tile in data ) {
+                  var hist = data[tile].histogram;
+                  //console.log('histogram', hist);
+                  for ( var val in hist ) {
+                    //console.log('hist[val]', hist[val]);
+                    if ( histogram[val] ) {
+                      histogram[val] += hist[val];
+                    } else {
+                      histogram[val] = hist[val];
+                    }
+                  }
+                }
+                console.log('histogram', histogram);
+                for ( var item in histogram ) {
+                  $($('.hist-item')[item]).css({'height': histogram[item]/200 + 'px'});
+                }
+              },2000);
+            });
 
           } else {
             dom.byId("mapCanvas").innerHTML = "This browser doesn't support canvas. Visit <a target='_blank' href='http://www.caniuse.com/#search=canvas'>caniuse.com</a> for supported browsers";
@@ -181,11 +282,17 @@
           max: 22000,
           values: [ 0, 4000 ],
           slide: function( event, ui ) {
-            //$( "#amount" ).val( "$" + ui.values[ 0 ] + " - $" + ui.values[ 1 ] );
-            var val = parseInt(ui.values[ 1 ]);
-            var endDate = moment('JAN 01, 1950').add(val, 'days').format('MMM DD, YYYY');
+            var start = parseInt(ui.values[ 0 ]);
+            var end = parseInt(ui.values[ 1 ]);
+            var startDate = moment('JAN 01, 1950').add(start, 'days').format('MMM DD, YYYY');
+            var endDate = moment('JAN 01, 1950').add(end, 'days').format('MMM DD, YYYY');
+            
+            $('#start-date').html(startDate);
             $('#end-date').html(endDate);
-            layer.timeIndex = val;
+
+
+            layer.timeStartIndex = start;
+            layer.timeIndex = end;
             layer._update();
           }
         });
@@ -203,6 +310,14 @@
      <div id="mapCanvas" style="height:100%;"></div>
      <div id="slider-container">
         <div>Tornado Touchdowns</div>
+        <div id="histogram">
+          <div class="hist-item" id="hist-1"></div>
+          <div class="hist-item" id="hist-2"></div>
+          <div class="hist-item" id="hist-3"></div>
+          <div class="hist-item" id="hist-4"></div>
+          <div class="hist-item" id="hist-5"></div>
+          <div class="hist-item" id="hist-6"></div>
+        </div>
         <div id="legend">
           <div class="leg-item"><span id="f0" class="leg-icon"></span>F0</div>
           <div class="leg-item"><span id="f1" class="leg-icon"></span>F1</div>
