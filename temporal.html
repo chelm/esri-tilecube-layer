@@ -5,6 +5,7 @@
     <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
     <title></title>
 
+    <link rel="stylesheet" href="css/jquery-ui.css">
     <link rel="stylesheet" href="//js.arcgis.com/3.8/js/esri/css/esri.css">
     <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
     <script>
@@ -91,9 +92,10 @@
     </style>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.2/moment.min.js"></script>
-    <script src="//js.arcgis.com/3.12compact/"></script>
     <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
-    
+    <script src="vendor/jquery-ui.min.js"></script>
+    <script src="//js.arcgis.com/3.12compact/"></script>
+
     <script>
       var map, rasterLayer;
       var canvasSupport;
@@ -173,19 +175,19 @@
           }
         }
 
-        $('#slider').on('change', function(e) {
-            var val = parseInt($(e.target).val());
+        $( "#slider" ).slider({
+          range: true,
+          min: 0,
+          max: 22000,
+          values: [ 0, 4000 ],
+          slide: function( event, ui ) {
+            //$( "#amount" ).val( "$" + ui.values[ 0 ] + " - $" + ui.values[ 1 ] );
+            var val = parseInt(ui.values[ 1 ]);
             var endDate = moment('JAN 01, 1950').add(val, 'days').format('MMM DD, YYYY');
             $('#end-date').html(endDate);
-        });
-
-        //slider events 
-        $('#slider').on('input', function(e) {
-          var val = parseInt($(e.target).val());
-          var endDate = moment('JAN 01, 1950').add(val, 'days').format('MMM DD, YYYY');
-          $('#end-date').html(endDate);
-          layer.timeIndex = val;
-          layer._update();
+            layer.timeIndex = val;
+            layer._update();
+          }
         });
 
         // does the browser support canvas? 
@@ -212,7 +214,7 @@
         <div id="date-range">
           <span class="date" id="start-date">Jan 01, 1950</span> to <span class="date" id="end-date"></span>
         </div>
-        <input id="slider" type="range" value="4000" min="0" max="22000" step="1" />
+        <div id="slider"></div>
      </div>
      <!--script src="vendor/hidpi-canvas.min.js"></script-->
   </body>
