@@ -41,6 +41,7 @@ var TileCubeLayer = declare(CanvasTileLayer, {
     this.temporal = (options.temporal === false) ? false : true;
     this.timeIndex = options.startTime || 10;
     this.style = options.style; 
+    this.buffer = options.buffer || 20; 
 
     this.sprites = {};
   },
@@ -161,15 +162,18 @@ var TileCubeLayer = declare(CanvasTileLayer, {
       this._generateSprite(point);
     }
 
-    var x = point.x;
-    var y = point.y;
+    var x = parseInt(point.x);
+    var y = parseInt(point.y);
     if ( this.hidpi ) {
       x *= 2;
       y *= 2;
     }
 
+    x += this.buffer;
+    y += this.buffer;
     var xOff = this.sprites[point.v].width/2;
     var yOff = this.sprites[point.v].height/2;
+    //console.log(xOff, yOff)
     context.drawImage(this.sprites[point.v], x-xOff, y-yOff);    
 
   },

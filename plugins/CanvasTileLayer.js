@@ -43,7 +43,7 @@ var CanvasTileLayer = declare(TiledMapServiceLayer, {
     this.urlTemplate = urlTemplate;
     this.options = options;
     this.hidpi = options.hidpi;
-    this.styles = options.styles;
+    this.buffer = 0;
 
     var initialExt = new Extent(-20037508.342787, -20037508.342780, 20037508.342780, 20037508.342787, new SpatialReference({ wkid:102100 }));
     var fullExt = new Extent(-20037508.342787, -20037508.342780, 20037508.342780, 20037508.342787, new SpatialReference({ wkid:102100 }));
@@ -177,6 +177,9 @@ var CanvasTileLayer = declare(TiledMapServiceLayer, {
   _addImage: function(level, row, r, col, c, id, tileW, tileH, opacity, tile, offsets){
     var self = this;
 
+    tileW += this.buffer*2,
+    tileH += this.buffer*2;
+
     var canvas = domConstruct.create("canvas"),
       dc = connection.connect;
 
@@ -186,7 +189,7 @@ var CanvasTileLayer = declare(TiledMapServiceLayer, {
     canvas.id = id;
     domClass.add(canvas, "layerTile");
 
-    var left = (tileW * col) - offsets.x, top = (tileH * row) - offsets.y,
+    var left = ((tileW-(this.buffer*2)) * col) - (offsets.x), top = ((tileH-(this.buffer*2)) * row) - (offsets.y),
         map = this._map, names = esriNS._css.names,
         css = {
           width: tileW + "px",
@@ -197,7 +200,7 @@ var CanvasTileLayer = declare(TiledMapServiceLayer, {
     canvas.height = tileH;
 
     if (map.navigationMode === "css-transforms") {
-      css[names.transform] = esriNS._css.translate(left, top);
+      css[names.transform] = esriNS._css.translate(left-this.buffer, top-this.buffer);
       domStyle.set(canvas, css);
 
       canvas._left = left;
