@@ -22,17 +22,17 @@ define(
   "esri/geometry/Extent",
   "esri/geometry/Rect",
   
-  "plugins/VectorTileLayer",
+  "plugins/CanvasTileLayer",
   "queue"
 ],
 function(
   declare, connection, lang, array, Url, domConstruct, domClass, domGeom, domStyle,
   ArrayList, gfxMatrix, has, string,
   esriNS, esriRequest, urlUtils, tileUtils, SpatialReference, Extent, Rect,
-  VectorTileLayer, queue
+  CanvasTileLayer, queue
 ) {
 
-var PbfTileLayer = declare(VectorTileLayer, {
+var TileCubeLayer = declare(CanvasTileLayer, {
   declaredClass: "esri.layers.TileCubeLayer",
   
   constructor: function ( urlTemplate, options) {
@@ -137,7 +137,6 @@ var PbfTileLayer = declare(VectorTileLayer, {
 
     if ( this.temporal === true ) {
       var time = self.timeIndex;
-      //console.time('loop and render point');
       for (var t = 0; t < time; t++){
         if ( tile[t] ) {
           for (var i = 0; i < tile[t].length; i++){
@@ -145,7 +144,6 @@ var PbfTileLayer = declare(VectorTileLayer, {
           }
         }
       }
-      //console.timeEnd('loop and render point');
     } else {
       
       for (var time in tile){
@@ -159,7 +157,6 @@ var PbfTileLayer = declare(VectorTileLayer, {
   },
 
   _renderPoint: function(point, context){
-
     if ( !this.sprites[point.v] ) {
       this._generateSprite(point);
     }
@@ -178,19 +175,13 @@ var PbfTileLayer = declare(VectorTileLayer, {
   },
 
   _generateSprite: function(point) {
-    //console.log('ok', point.v)
     var style = this.style(parseInt(point.v));
-    var canvas = document.createElement('canvas');
-    canvas.width = style.radius*2;
-    canvas.height = style.radius*2;
-    if (this.hidpi) {
-      canvas.width *= window.devicePixelRatio;
-      canvas.height *= window.devicePixelRatio;
-    }
-    var context = canvas.getContext('2d');
-    //var centerX = canvas.width / 2;
-    //var centerY = canvas.height / 2;
     var r = style.radius;
+
+    var canvas = document.createElement('canvas');
+    canvas.width = style.radius * 2;
+    canvas.height = style.radius * 2;
+    var context = canvas.getContext('2d');
 
     context.beginPath();
     context.arc(r, r, r, 0, 2 * Math.PI, false);
@@ -201,15 +192,14 @@ var PbfTileLayer = declare(VectorTileLayer, {
     context.stroke();
     
     this.sprites[point.v] = canvas;
-    //console.log('sprites', this.sprites);
   }
 
 
 });
 
 if (has("extend-esri")) {
-  lang.setObject("layers.PbfTileLayer", PbfTileLayer, esriNS);
+  lang.setObject("layers.TileCubeLayer", TileCubeLayer, esriNS);
 }
 
-return PbfTileLayer;  
+return TileCubeLayer;  
 });

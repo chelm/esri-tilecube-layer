@@ -6,6 +6,7 @@
     <title></title>
 
     <link rel="stylesheet" href="//js.arcgis.com/3.8/js/esri/css/esri.css">
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
     <script>
       var dojoConfig = {
         paths: {
@@ -21,6 +22,7 @@
         height:100%;
         margin: 0;
         padding: 0px 0 0 0;
+        font-family: 'Open Sans', sans-serif;
       }
 
       #mapCanvas {
@@ -39,7 +41,7 @@
       }
 
       .date {
-        font-size:1.5em;
+        font-size:2.5em;
       }
 
     </style>
@@ -122,40 +124,19 @@
           }
         }
 
-
-        // slider events
-        var timer; 
-
         $('#slider').on('change', function(e) {
-
-          console.log('change')
-          /*if (timer) {
-            clearTimeout(timer);
-          }
-
-          timer = setTimeout(function(){*/
-
             var val = parseInt($(e.target).val());
-            //layer.timeIndex = val;
-          
             var endDate = moment('JAN 01, 1950').add(val, 'days').format('MMM DD, YYYY');
             $('#end-date').html(endDate);
-          
-            //layer._update();
-            //timer = null;
-          //},500);
         });
 
         //slider events 
         $('#slider').on('input', function(e) {
           var val = parseInt($(e.target).val());
-          
           var endDate = moment('JAN 01, 1950').add(val, 'days').format('MMM DD, YYYY');
           $('#end-date').html(endDate);
-
           layer.timeIndex = val;
           layer._update();
-          
         });
 
         // does the browser support canvas? 
