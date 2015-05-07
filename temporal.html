@@ -165,6 +165,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.2/moment.min.js"></script>
     <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
     <script src="vendor/jquery-ui.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.8.0/lodash.min.js"></script>
     <script src="//js.arcgis.com/3.12compact/"></script>
 
     <script>
@@ -202,7 +203,8 @@
               tileType: 'canvas',
               hidpi: false, 
               temporal: true,
-              startTime: 4000,
+              startTime: 0,
+              endTime: 4000,
               style: function(val) {
                 var color;
                 switch(true) {
@@ -233,69 +235,76 @@
                 }; 
               }
             });
-<<<<<<< HEAD
+
             layer.on("tiles-loaded", function(){
-              console.log(layer);
+              updateHistogram(layer);
             });
-=======
-  
->>>>>>> building legend
+
+            map.on('extent-change', function() {
+              updateHistogram(layer);
+            });
+
             map.addLayer(layer);
 
             var endDate = moment('JAN 01, 1950').add(4000, 'days').format('MMM DD, YYYY');
             $('#end-date').html(endDate);
 
-            console.log('preload..', layer);
-            layer.on('update-end', function() {
-              console.log('layer', layer);
+            function updateHistogram(layer) {
+              var data = layer._tileData;
+              var startIndex = layer.startTime;
+              var endIndex = layer.endTime;
               var histogram = {};
-              setTimeout(function() {
-                var data = layer._tileData;
-                console.log('data', data);
-                for ( var tile in data ) {
-                  var hist = data[tile].histogram;
-                  //console.log('histogram', hist);
-                  for ( var val in hist ) {
-                    //console.log('hist[val]', hist[val]);
-                    if ( histogram[val] ) {
-                      histogram[val] += hist[val];
-                    } else {
-                      histogram[val] = hist[val];
+              for ( var tile in data ) {
+                var hist = data[tile].histograms;
+                for ( var val in hist ) {
+                  //console.log('hist[val]', hist[val]);
+                  val = parseInt(val);
+                  if ( val >= startIndex && val <= endIndex ) {
+                    for ( var i in hist[val] ) {
+                      if ( histogram[i] ) {
+                        histogram[i] += hist[val][i];
+                      } else {
+                        histogram[i] = hist[val][i];
+                      }
                     }
                   }
                 }
-                console.log('histogram', histogram);
-                for ( var item in histogram ) {
-                  $($('.hist-item')[item]).css({'height': histogram[item]/200 + 'px'});
-                }
-              },2000);
-            });
+              }
 
+              var max = _.max(histogram);
+              for ( var item in histogram ) {
+                var percent = (histogram[item] / max) * 100;
+                $($('.hist-item')[item]).css({'height': percent + '%'});
+              }
+            }
+
+            $( "#slider" ).slider({
+              range: true,
+              min: 0,
+              max: 22000,
+              values: [ 0, 4000 ],
+              slide: function( event, ui ) {
+                var start = parseInt(ui.values[ 0 ]);
+                var end = parseInt(ui.values[ 1 ]);
+                var startDate = moment('JAN 01, 1950').add(start, 'days').format('MMM DD, YYYY');
+                var endDate = moment('JAN 01, 1950').add(end, 'days').format('MMM DD, YYYY');
+                
+                $('#start-date').html(startDate);
+                $('#end-date').html(endDate);
+
+
+                layer.startTime = start;
+                layer.endTime = end;
+                layer._update();
+              },
+              stop: function() {
+                updateHistogram(layer);
+              }
+            });
           } else {
             dom.byId("mapCanvas").innerHTML = "This browser doesn't support canvas. Visit <a target='_blank' href='http://www.caniuse.com/#search=canvas'>caniuse.com</a> for supported browsers";
           }
         }
-
-        $( "#slider" ).slider({
-          range: true,
-          min: 0,
-          max: 22000,
-          values: [ 0, 4000 ],
-          slide: function( event, ui ) {
-            var start = parseInt(ui.values[ 0 ]);
-            var end = parseInt(ui.values[ 1 ]);
-            var startDate = moment('JAN 01, 1950').add(start, 'days').format('MMM DD, YYYY');
-            var endDate = moment('JAN 01, 1950').add(end, 'days').format('MMM DD, YYYY');
-            
-            $('#start-date').html(startDate);
-            $('#end-date').html(endDate);
-
-
-            layer.timeStartIndex = start;
-            layer.timeIndex = end;
-            layer._update();
-          }
-        });
 
         // does the browser support canvas? 
         function supports_canvas() {

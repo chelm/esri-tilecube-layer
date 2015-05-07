@@ -42,7 +42,8 @@ var TileCubeLayer = declare(CanvasTileLayer, {
       self.emit('tiles-loaded', this);
     });
     this.temporal = (options.temporal === false) ? false : true;
-    this.timeIndex = options.startTime || 10;
+    this.startTime = options.startTime || 0;
+    this.endTime = options.endTime || 10;
     this.style = options.style; 
     this.buffer = options.buffer || 20; 
 
@@ -166,7 +167,7 @@ var TileCubeLayer = declare(CanvasTileLayer, {
     }
 
     if ( this.temporal === true ) {
-      var time = self.timeIndex;
+      var time = self.endTime;
       for (var t = 0; t < time; t++){
         if ( tile[t] ) {
           for (var i = 0; i < tile[t].length; i++){
