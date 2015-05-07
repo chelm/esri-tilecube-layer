@@ -84,34 +84,50 @@ var TileCubeLayer = declare(CanvasTileLayer, {
   },
 
   _getTile: function(url, callback){
+    var self = this;
     var _xhr = new XMLHttpRequest();
     _xhr.open( "GET", url, true );
     _xhr.responseType = "application/json";
     _xhr.onload = function( evt ) {
       try { 
         var json = JSON.parse(_xhr.response);
-        var tile = {};
-        for (var i=0; i < json.length; i++){
-          var pixel = json[i];
-          for (var j=0; j < pixel.t.length; j++){
-            if (!tile[pixel.t[j]]){
-              tile[pixel.t[j]] = []
-            }
-            tile[pixel.t[j]].push({
-              x: pixel.x,
-              y: pixel.y,
-              v: pixel.v[j]
-            });
-          }
-        }
         if ( json ) {
-          callback(null, tile); 
+          self._processData(json, callback);   
         }
       } catch(e){
         //console.log(e);
       }
      }
      _xhr.send(null);
+  },
+
+  _processData: function(json, callback){
+    var tile = {
+      histogram: {}
+    };
+    for (var i=0; i < json.length; i++){
+      var pixel = json[i];
+      for (var j=0; j < pixel.t.length; j++){
+
+        var time = pixel.t[j];
+        var val = pixel.v[j];
+
+        if (!tile.histogram[val]){
+          tile.histogram[val] = 0;
+        }
+        tile.histogram[val]++;
+ 
+        if (!tile[time]){
+          tile[time] = []
+        }
+        tile[time].push({
+          x: pixel.x,
+          y: pixel.y,
+          v: val
+        });
+      }
+    }
+    callback(null, tile);
   },
 
   _update: function( styles ){
