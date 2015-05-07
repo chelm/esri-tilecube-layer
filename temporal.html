@@ -160,6 +160,9 @@
                 }; 
               }
             });
+            layer.on("tiles-loaded", function(){
+              console.log(layer);
+            });
             map.addLayer(layer);
             
             var endDate = moment('JAN 01, 1950').add(4000, 'days').format('MMM DD, YYYY');

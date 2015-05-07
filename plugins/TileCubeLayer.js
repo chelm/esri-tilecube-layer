@@ -36,14 +36,18 @@ var TileCubeLayer = declare(CanvasTileLayer, {
   declaredClass: "esri.layers.TileCubeLayer",
   
   constructor: function ( urlTemplate, options) {
-    this.inherited(arguments);
+    var self = this;
     this.tileQ = queue(4);
+    this.tileQ.awaitAll(function() { 
+      self.emit('tiles-loaded', this);
+    });
     this.temporal = (options.temporal === false) ? false : true;
     this.timeIndex = options.startTime || 10;
     this.style = options.style; 
     this.buffer = options.buffer || 20; 
 
     this.sprites = {};
+    //this.inherited(arguments);
   },
 
   // override this method to create canvas elements instead of img
@@ -92,7 +96,7 @@ var TileCubeLayer = declare(CanvasTileLayer, {
       try { 
         var json = JSON.parse(_xhr.response);
         if ( json ) {
-          self._processData(json, callback);   
+          callback(null, self._processData(json));   
         }
       } catch(e){
         //console.log(e);
@@ -103,31 +107,40 @@ var TileCubeLayer = declare(CanvasTileLayer, {
 
   _processData: function(json, callback){
     var tile = {
-      histogram: {}
+      histograms: {}
     };
     for (var i=0; i < json.length; i++){
       var pixel = json[i];
-      for (var j=0; j < pixel.t.length; j++){
+      var steps = pixel.t;
+      var values = pixel.v;
+      var stepData = [];
 
-        var time = pixel.t[j];
+      for (var j=0; j < steps.length; j++){
+
+        var step = steps[j];
         var val = pixel.v[j];
 
-        if (!tile.histogram[val]){
-          tile.histogram[val] = 0;
+        if (!tile.histograms[step]) {
+          tile.histograms[step] = {};
         }
-        tile.histogram[val]++;
+
+        if (!tile.histograms[step][val]) {
+          tile.histograms[step][val] = 0;
+        }
+        tile.histograms[step][val]++;
+
+        if (!tile[step]){
+          tile[step] = [];
+        }
  
-        if (!tile[time]){
-          tile[time] = []
-        }
-        tile[time].push({
+        tile[step].push({
           x: pixel.x,
           y: pixel.y,
           v: val
         });
       }
     }
-    callback(null, tile);
+    return tile; //callback(null, tile);
   },
 
   _update: function( styles ){

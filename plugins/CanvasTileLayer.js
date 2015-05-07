@@ -148,7 +148,6 @@ var CanvasTileLayer = declare(TiledMapServiceLayer, {
 
     this.loaded = true;
     this.onLoad(this);
-
   },
 
   getTileUrl: function (level, row, col) {
