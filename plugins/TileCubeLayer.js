@@ -171,7 +171,13 @@ var TileCubeLayer = declare(CanvasTileLayer, {
       for (var t = 0; t < time; t++){
         if ( tile[t] ) {
           for (var i = 0; i < tile[t].length; i++){
-            this._renderPoint( tile[t][i], context);
+            if ( this.disabledValues ) {
+              if ( this.disabledValues.indexOf(parseInt(tile[t][i].v)) === -1 ) {
+                this._renderPoint( tile[t][i], context);
+              }
+            } else {
+              this._renderPoint( tile[t][i], context);
+            }
           }
         }
       }
