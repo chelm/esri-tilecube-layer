@@ -44,6 +44,50 @@
         font-size:2.5em;
       }
 
+      #legend {
+        width:300px;
+        overflow: hidden;
+      }
+      .leg-item {
+        float:left;
+        margin-right: 5px;
+        font-size: 0.75em;
+      }
+      .leg-icon {
+        border-radius: 20px;
+        margin-right:3px;
+        display: inline-block;
+        width:10px;
+        height:10px; 
+      }
+      #f0 {
+        background:rgb(255,255,178);
+        width:3px;
+        height:3px;
+      }
+      #f1 {
+        background:rgb(254,217,118);
+        width:4px;
+        height:4px;
+      }
+      #f2 {
+        background:rgb(254,178,76);
+        width:6px;
+        height:6px;
+      }
+      #f3 {
+        background:rgb(253,141,60);
+        width:7px;
+        height:7px;
+      }
+      #f4 {
+        background:rgb(240,59,32);
+        width:8px;
+        height:8px;
+      }
+      #f5 {
+        background:rgb(189,0,38);
+      }
     </style>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.2/moment.min.js"></script>
@@ -85,7 +129,7 @@
               tileType: 'canvas',
               hidpi: false, 
               temporal: true,
-              startTime: 10000,
+              startTime: 4000,
               style: function(val) {
                 var color;
                 switch(true) {
@@ -118,7 +162,7 @@
             });
             map.addLayer(layer);
             
-            var endDate = moment('JAN 01, 1950').add(700, 'days').format('MMM DD, YYYY');
+            var endDate = moment('JAN 01, 1950').add(4000, 'days').format('MMM DD, YYYY');
             $('#end-date').html(endDate);
 
           } else {
@@ -154,10 +198,18 @@
      <div id="mapCanvas" style="height:100%;"></div>
      <div id="slider-container">
         <div>Tornado Touchdowns</div>
+        <div id="legend">
+          <div class="leg-item"><span id="f0" class="leg-icon"></span>F0</div>
+          <div class="leg-item"><span id="f1" class="leg-icon"></span>F1</div>
+          <div class="leg-item"><span id="f2" class="leg-icon"></span>F2</div>
+          <div class="leg-item"><span id="f3" class="leg-icon"></span>F3</div>
+          <div class="leg-item"><span id="f4" class="leg-icon"></span>F4</div>
+          <div class="leg-item"><span id="f5" class="leg-icon"></span>F5</div>
+        </div>
         <div id="date-range">
           <span class="date" id="start-date">Jan 01, 1950</span> to <span class="date" id="end-date"></span>
         </div>
-        <input id="slider" type="range" value="500" min="0" max="22000" step="1" />
+        <input id="slider" type="range" value="4000" min="0" max="22000" step="1" />
      </div>
      <!--script src="vendor/hidpi-canvas.min.js"></script-->
   </body>
