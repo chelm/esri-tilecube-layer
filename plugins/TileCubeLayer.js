@@ -138,6 +138,7 @@ var TileCubeLayer = declare(CanvasTileLayer, {
           y: pixel.y,
           v: val
         });
+        
       }
     }
     return tile; //callback(null, tile);
