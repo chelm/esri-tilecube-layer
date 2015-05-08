@@ -224,13 +224,13 @@ var TileCubeLayer = declare(CanvasTileLayer, {
     canvas.height = style.radius * 2;
     var context = canvas.getContext('2d');
 
-    context.beginPath();
     context.arc(r, r, r, 0, 2 * Math.PI, false);
     context.fillStyle = style.fillStyle || 'rgb(100,100,125)';
     context.fill();
-    context.lineWidth = style.lineWidth || 0.8;
+    context.lineWidth = style.lineWidth || 0.2;
     context.strokeStyle = style.strokeStyle || 'rgb(240,240,240)';
     context.stroke();
+    context.beginPath();
     
     this.sprites[point.v] = canvas;
   }
