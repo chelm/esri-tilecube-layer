@@ -197,7 +197,7 @@
         map = new Map("mapCanvas", {
           center: [-99.076, 38.132],
           zoom: 5,
-          maxZoom: 7,
+          maxZoom: 8,
           minZoom: 2,
           basemap: "gray"
         });
@@ -264,16 +264,18 @@
               var endIndex = layer.endTime;
               var histogram = {};
               for ( var tile in data ) {
-                var hist = data[tile].histograms;
-                for ( var val in hist ) {
-                  //console.log('hist[val]', hist[val]);
-                  val = parseInt(val);
-                  if ( val >= startIndex && val <= endIndex ) {
-                    for ( var i in hist[val] ) {
-                      if ( histogram[i] ) {
-                        histogram[i] += hist[val][i];
-                      } else {
-                        histogram[i] = hist[val][i];
+                if (dom.byId(tile)) {
+                  var hist = data[tile].histograms;
+                  for ( var val in hist ) {
+                    //console.log('hist[val]', hist[val]);
+                    val = parseInt(val);
+                    if ( val >= startIndex && val <= endIndex ) {
+                      for ( var i in hist[val] ) {
+                        if ( histogram[i] ) {
+                          histogram[i] += hist[val][i];
+                        } else {
+                          histogram[i] = hist[val][i];
+                        }
                       }
                     }
                   }
@@ -305,8 +307,6 @@
                 layer.startTime = start;
                 layer.endTime = end;
                 layer._update();
-              },
-              stop: function() {
                 updateHistogram(layer);
               }
             });

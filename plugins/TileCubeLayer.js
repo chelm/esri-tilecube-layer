@@ -74,8 +74,8 @@ var TileCubeLayer = declare(CanvasTileLayer, {
                 }
               }, 25);
             }, id);
-           // for saving data, store the tile and layers
-           self._tileData[id] = tileJson;
+            // for saving data, store the tile and layers
+            self._tileData[id] = tileJson;
           } catch(e){
              
           }
@@ -169,7 +169,7 @@ var TileCubeLayer = declare(CanvasTileLayer, {
 
     if ( this.temporal === true ) {
       var time = self.endTime;
-      for (var t = 0; t < time; t++){
+      for (var t = this.startTime; t < time; t++){
         if ( tile[t] ) {
           for (var i = 0; i < tile[t].length; i++){
             if ( this.disabledValues ) {
