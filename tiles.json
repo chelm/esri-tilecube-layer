@@ -1,0 +1,12 @@
+{
+    "tornadoes": {
+        "start": "JAN 01, 1950",
+        "min": 0,
+        "max": 23300
+    },
+    "mping": {
+      "start": "JAN 01, 1950",
+      "min":0,
+      "max": 500
+    }
+}

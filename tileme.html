@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title></title>
+
+    <link rel="stylesheet" href="css/jquery-ui.css">
+    <link rel="stylesheet" href="//js.arcgis.com/3.8/js/esri/css/esri.css">
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+    <script>
+      var dojoConfig = {
+        paths: {
+          plugins: location.pathname.replace(/\/[^/]+$/, "") + "/plugins",
+          queue: "http://d3js.org/queue.v1.min"
+        }
+      };
+    </script>
+
+    <style>
+      html,body {
+        width:100%;
+        height:100%;
+        margin: 0;
+        padding: 0px 0 0 0;
+        font-family: 'Open Sans', sans-serif;
+      }
+
+      #mapCanvas {
+        padding:0;
+      }
+
+      .footer-container {
+        width: 85%;
+        overflow: hidden;
+        position: relative;
+        margin: auto;
+      }
+      .blurb {
+        font-size:0.8em;
+      }
+      .emph {
+        font-size: 1.2em;
+        font-weight: 800;
+      }
+      #footer {
+        background: #ecf0f1;
+        padding:10px;
+        height:95px;
+      }
+
+      #slider-container {
+        width: 85%;
+        pointer-events: none;
+        margin: auto;
+        margin-top:15px;
+        margin-bottom:15px;
+      }
+
+      #slider {
+        width:100%;
+        pointer-events:auto;
+      }
+
+      #date-range {
+        width:100%;
+        text-align: center;
+      }
+      .date {
+        font-size:2.0em;
+      }
+      #title {
+        pointer-events:none;
+        font-size:1.1em;
+      }
+
+      .ui-slider-handle.ui-state-default.ui-corner-all {
+        background-color: #FFF;
+      }
+
+      .ui-slider-horizontal .ui-slider-handle {
+        top: -.3em;
+        margin-left: -0.3em;
+      }
+
+      .ui-widget-content .ui-state-hover, .ui-state-hover, .ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active, .ui-widget-header .ui-state-hover, .ui-widget-content .ui-state-focus, .ui-widget-header .ui-state-focus {
+        color:#555;
+        border: 1px solid #2c3e50;
+        background-color: #FFF;
+      }
+
+      .ui-widget-header {
+        background:#2980b9;
+      }
+
+      .ui-slider-horizontal {
+        height: .1em;
+      }
+
+      .ui-slider .ui-slider-handle {
+        width: 0.5em;
+        height: 0.5em;
+        cursor: pointer;
+      }
+
+      .ui-slider-horizontal .ui-slider-handle {
+        top: -0.2em;
+      }
+
+      .ui-corner-all {
+        border-radius: 20px !important;
+      }
+    </style>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.2/moment.min.js"></script>
+    <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+    <script src="vendor/jquery-ui.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.8.0/lodash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+    <script src="//js.arcgis.com/3.12compact/"></script>
+
+    <script>
+      var map, rasterLayer;
+      var canvasSupport;
+
+      require([
+        "esri/map", 
+        "dojo/dom", 
+        "plugins/TileCubeLayer",
+        "esri/layers/WebTiledLayer",
+        "dojo/domReady!"
+      ], function(
+        Map, 
+        dom, 
+        TileCubeLayer,
+        WebTiledLayer
+      ){
+
+        var height = $(window).height() - 110;
+        $('#mapCanvas').css({"height": height + "px"});
+
+        // does the browser support canvas? 
+        canvasSupport = supports_canvas();
+
+        $.ajax({
+            url: "tiles.json",
+            dataType: "json"
+          }).done(function(config) {
+          
+          var tiles = new WebTiledLayer("http://{s}.basemaps.cartocdn.com/dark_nolabels/${level}/${col}/${row}.png");
+          //http://d.tile.stamen.com/terrain/12/656/1583.jpg
+
+          map = new Map("mapCanvas", {
+            center: [-99.076, 38.132],
+            zoom: 5,
+            maxZoom: 8,
+            minZoom: 2,
+            basemap: "dark-gray"
+          });
+
+          //map.addLayer(tiles);
+
+          map.on("load", mapLoaded);
+
+          var tileDir = location.hash.replace(/\#/g, '');
+          if ( tileDir === "" ) tileDir = "tornadoes";
+
+          function mapLoaded() {
+
+            // Add raster layer
+            if ( canvasSupport ) {
+              layer = new TileCubeLayer(tileDir+'/{level}/{col}/{row}.json', {
+                tileType: 'canvas',
+                hidpi: false, 
+                temporal: true,
+                startTime: 0,
+                endTime: config[tileDir].max / 15,
+                style: function(val) {
+                  var color;
+                  switch(true) {
+                    case val === 0:
+                      color ='rgb(255,255,178)';
+                      break;
+                    case val === 1:
+                      color ='rgb(254,217,118)';
+                      break;
+                    case val === 2:
+                      color ='rgb(254,178,76)';
+                      break;
+                    case val === 3:
+                      color ='rgb(253,141,60)';
+                      break;
+                    case val === 4:
+                      color ='rgb(240,59,32)';
+                      break;
+                    case val === 5:
+                      color ='rgb(189,0,38)';
+                      break;
+                    default:
+                      color ='rgb(250,250,250)';
+                  }
+                  return {
+                    fillStyle: color,
+                    radius: val + 1
+                  }; 
+                }
+              });
+
+              map.addLayer(layer);
+
+              var endDate = moment( config[tileDir].start ).add(4000, 'days').format('MMM DD, YYYY');
+              $('#end-date').html(endDate);
+
+            
+              $( "#slider" ).slider({
+                range: true,
+                min: config[tileDir].min,
+                max: config[tileDir].max,
+                values: [ 0, config[tileDir].max / 15 ],
+                slide: function( event, ui ) {
+                  var start = parseInt(ui.values[ 0 ]);
+                  var end = parseInt(ui.values[ 1 ]);
+                  var startDate = moment( config[tileDir].start ).add(start, 'days').format('MMM DD, YYYY');
+                  var endDate = moment( config[tileDir].start ).add(end, 'days').format('MMM DD, YYYY');
+                  
+                  $('#start-date').html(startDate);
+                  $('#end-date').html(endDate);
+
+
+                  layer.startTime = start;
+                  layer.endTime = end;
+                  layer._update();
+                }
+              });
+
+            } else {
+              dom.byId("mapCanvas").innerHTML = "This browser doesn't support canvas. Visit <a target='_blank' href='http://www.caniuse.com/#search=canvas'>caniuse.com</a> for supported browsers";
+            }
+
+          }
+        });
+
+        
+        // does the browser support canvas? 
+        function supports_canvas() {
+          return !!document.createElement("canvas").getContext;
+        }
+      });
+    </script>
+  </head>
+  
+  <body class="">
+     <div id="mapCanvas"></div>
+     <div id="footer">
+      <div>
+        <div id="date-range">
+          <span class="date" id="start-date">Jan 01, 1950</span> to <span class="date" id="end-date"></span>
+        </div>
+        <div id="slider-container">
+          <div id="slider"></div>
+        </div>
+      </div>
+
+     <!--script src="vendor/hidpi-canvas.min.js"></script-->
+  </body>
+
+</html>
