@@ -176,32 +176,9 @@
                 startTime: 0,
                 endTime: config[tileDir].max / 15,
                 style: function(val) {
-                  var color;
-                  switch(true) {
-                    case val === 0:
-                      color ='rgb(255,255,178)';
-                      break;
-                    case val === 1:
-                      color ='rgb(254,217,118)';
-                      break;
-                    case val === 2:
-                      color ='rgb(254,178,76)';
-                      break;
-                    case val === 3:
-                      color ='rgb(253,141,60)';
-                      break;
-                    case val === 4:
-                      color ='rgb(240,59,32)';
-                      break;
-                    case val === 5:
-                      color ='rgb(189,0,38)';
-                      break;
-                    default:
-                      color ='rgb(250,250,250)';
-                  }
                   return {
-                    fillStyle: color,
-                    radius: val + 1
+                    fillStyle: "#fdf39b",
+                    radius: 1.5
                   }; 
                 }
               });
@@ -216,6 +193,7 @@
                 range: true,
                 min: config[tileDir].min,
                 max: config[tileDir].max,
+                step: config[tileDir].step,
                 values: [ 0, config[tileDir].max / 15 ],
                 slide: function( event, ui ) {
                   var start = parseInt(ui.values[ 0 ]);
