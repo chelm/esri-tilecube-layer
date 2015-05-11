@@ -1,14 +1,16 @@
 {
     "tornadoes": {
-        "start": "JAN 01, 1950",
-        "step": 1,
-        "min": 0,
-        "max": 23300
-    },
-    "mping": {
       "start": "JAN 01, 1950",
       "step": 1,
+      "min": 0,
+      "max": 23300,
+      "range": true
+    },
+    "mping": {
+      "start": "MAY 05, 2011",
+      "step": 1,
       "min":0,
-      "max": 500
+      "max": 1443,
+      "range": false
     }
 }

@@ -51,7 +51,6 @@
 
       #slider-container {
         width: 85%;
-        pointer-events: none;
         margin: auto;
         margin-top:15px;
         margin-bottom:15px;
@@ -68,6 +67,19 @@
       }
       .date {
         font-size:2.0em;
+      }
+
+      #play-btn {
+        position: absolute;
+        bottom: 50px;
+        border: 1px solid #D1D1D1;
+        border-radius: 3px;
+        cursor: pointer;
+        margin-bottom: 10px;
+        font-size: 0.68em;
+        padding: 5px;
+        padding-top: 2px;
+        padding-bottom: 2px;
       }
       #title {
         pointer-events:none;
@@ -174,7 +186,8 @@
                 hidpi: false, 
                 temporal: true,
                 startTime: 0,
-                endTime: config[tileDir].max / 15,
+                endTime: Math.round(config[tileDir].max / 15),
+                cumulative: ( config[tileDir].range ) ? true : false,
                 style: function(val) {
                   return {
                     fillStyle: "#fdf39b",
@@ -185,29 +198,92 @@
 
               map.addLayer(layer);
 
-              var endDate = moment( config[tileDir].start ).add(4000, 'days').format('MMM DD, YYYY');
+              if ( config[tileDir].range ) {
+                var startDate = moment( config[tileDir].start ).format('MMM DD, YYYY');
+                $('#start-date').html(startDate);
+              }
+
+              var endDate = moment( config[tileDir].start ).add(Math.round(config[tileDir].max / 15), 'days').format('MMM DD, YYYY');
               $('#end-date').html(endDate);
 
             
               $( "#slider" ).slider({
-                range: true,
+                range: config[tileDir].range,
                 min: config[tileDir].min,
                 max: config[tileDir].max,
                 step: config[tileDir].step,
-                values: [ 0, config[tileDir].max / 15 ],
+                values: (config[tileDir].range) ? [ 0, Math.round(config[tileDir].max / 15) ] : Math.round(config[tileDir].max / 15),
                 slide: function( event, ui ) {
-                  var start = parseInt(ui.values[ 0 ]);
-                  var end = parseInt(ui.values[ 1 ]);
-                  var startDate = moment( config[tileDir].start ).add(start, 'days').format('MMM DD, YYYY');
-                  var endDate = moment( config[tileDir].start ).add(end, 'days').format('MMM DD, YYYY');
-                  
-                  $('#start-date').html(startDate);
-                  $('#end-date').html(endDate);
 
+                  if ( config[tileDir].range ) {
+                    var start = parseInt(ui.values[ 0 ]);
+                    var startDate = moment( config[tileDir].start ).add(start, 'days').format('MMM DD, YYYY');
+                    $('#start-date').html(startDate);
+                    layer.startTime = start;
 
-                  layer.startTime = start;
-                  layer.endTime = end;
+                    var end = parseInt(ui.values[ 1 ]);
+                    var endDate = moment( config[tileDir].start ).add(end, 'days').format('MMM DD, YYYY');
+                    
+                    $('#end-date').html(endDate);
+                    layer.endTime = end;
+                    
+                  } else {
+                    var end = parseInt(ui.value);
+                    var endDate = moment( config[tileDir].start ).add(end, 'days').format('MMM DD, YYYY');
+                    
+                    $('#end-date').html(endDate);
+                    layer.endTime = end;
+                  }
+
                   layer._update();
+                },
+                change: function( event, ui ) {
+
+                  if ( config[tileDir].range ) {
+                    var start = parseInt(ui.values[ 0 ]);
+                    var startDate = moment( config[tileDir].start ).add(start, 'days').format('MMM DD, YYYY');
+                    $('#start-date').html(startDate);
+                    layer.startTime = start;
+
+                    var end = parseInt(ui.values[ 1 ]);
+                    var endDate = moment( config[tileDir].start ).add(end, 'days').format('MMM DD, YYYY');
+                    
+                    $('#end-date').html(endDate);
+                    layer.endTime = end;
+                    
+                  } else {
+                    var end = parseInt(ui.value);
+                    var endDate = moment( config[tileDir].start ).add(end, 'days').format('MMM DD, YYYY');
+                    
+                    $('#end-date').html(endDate);
+                    layer.endTime = end;
+                  }
+
+                  layer._update();
+                }
+              });
+
+              if ( !config[tileDir].range ) {
+                $('#from-to').hide();
+              } else {
+                $('#play-btn').hide();
+              }
+
+              $('#play-btn').on('click', function() {
+
+                if ( !window.playInterval ) { 
+                  $('#play-btn').html('pause');
+                  window.playInterval = setInterval(function(){
+                    //console.log('window.value', window.value);
+                    window.value = window.value || 0;
+                    $("#slider").slider('value',window.value);
+                    $('#slider').trigger('slidechange');
+                    window.value++;
+                  }, 10);
+                } else {
+                  $('#play-btn').html('play');
+                  clearInterval(window.playInterval);
+                  window.playInterval = null;
                 }
               });
 
@@ -232,9 +308,10 @@
      <div id="footer">
       <div>
         <div id="date-range">
-          <span class="date" id="start-date">Jan 01, 1950</span> to <span class="date" id="end-date"></span>
+          <span class="date" id="start-date"></span> <span id="from-to">-</span> <span class="date" id="end-date"></span>
         </div>
         <div id="slider-container">
+          <div id="play-btn">play</div>
           <div id="slider"></div>
         </div>
       </div>
