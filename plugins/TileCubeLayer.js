@@ -45,6 +45,7 @@ var TileCubeLayer = declare(CanvasTileLayer, {
     this.startTime = options.startTime || 0;
     this.endTime = options.endTime || 10;
     this.style = options.style; 
+    this.cumulative = options.cumulative;
     this.buffer = options.buffer || 20; 
 
     this.sprites = {};
@@ -169,15 +170,30 @@ var TileCubeLayer = declare(CanvasTileLayer, {
 
     if ( this.temporal === true ) {
       var time = self.endTime;
-      for (var t = this.startTime; t < time; t++){
-        if ( tile[t] ) {
-          for (var i = 0; i < tile[t].length; i++){
-            if ( this.disabledValues ) {
-              if ( this.disabledValues.indexOf(parseInt(tile[t][i].v)) === -1 ) {
+      if ( this.cumulative ) {
+        for (var t = this.startTime; t < time; t++){
+          if ( tile[t] ) {
+            for (var i = 0; i < tile[t].length; i++){
+              if ( this.disabledValues ) {
+                if ( this.disabledValues.indexOf(parseInt(tile[t][i].v)) === -1 ) {
+                  this._renderPoint( tile[t][i], context);
+                }
+              } else {
                 this._renderPoint( tile[t][i], context);
               }
+            }
+          }
+        }
+      } else {
+        //console.log('not cumulative', tile, time);
+        if ( tile[time] ) {
+          for (var i = 0; i < tile[time].length; i++){
+            if ( this.disabledValues ) {
+              if ( this.disabledValues.indexOf(parseInt(tile[time][i].v)) === -1 ) {
+                this._renderPoint( tile[time][i], context);
+              }
             } else {
-              this._renderPoint( tile[t][i], context);
+              this._renderPoint( tile[time][i], context);
             }
           }
         }
