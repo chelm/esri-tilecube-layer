@@ -161,7 +161,7 @@ var TileCubeLayer = declare(CanvasTileLayer, {
     var width = canvas.width, height=canvas.height;
     //console.log(width, height);
 
-    //context.clearRect(0, 0, width, height);
+    context.clearRect(0, 0, width, height);
 
     if (this.hidpi) {
       width *= (1/window.devicePixelRatio);

@@ -213,6 +213,8 @@
                 slide: function( event, ui ) {
 
                   if ( config[tileDir].range ) {
+                    console.log('true!!!', ui.values);
+                    
                     var start = parseInt(ui.values[ 0 ]);
                     var startDate = moment( config[tileDir].start ).add(start, 'days').format('MMM DD, YYYY');
                     $('#start-date').html(startDate);
