@@ -188,10 +188,13 @@
                 startTime: 0,
                 endTime: Math.round(config[tileDir].max / 15),
                 cumulative: ( config[tileDir].range ) ? true : false,
-                style: eval(config[tileDir].style)
+                style: function() {
+                  return {
+                    fillStyle: "#FFF",
+                    radius: 3
+                  }; 
+                }
               });
-
-              console.log('eval(config[tileDir].style)', eval(config[tileDir].style));
 
               map.addLayer(layer);
 
@@ -213,8 +216,7 @@
                 slide: function( event, ui ) {
 
                   if ( config[tileDir].range ) {
-                    console.log('true!!!', ui.values);
-                    
+
                     var start = parseInt(ui.values[ 0 ]);
                     var startDate = moment( config[tileDir].start ).add(start, 'days').format('MMM DD, YYYY');
                     $('#start-date').html(startDate);
