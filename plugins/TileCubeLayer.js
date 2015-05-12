@@ -46,7 +46,8 @@ var TileCubeLayer = declare(CanvasTileLayer, {
     this.endTime = options.endTime || 10;
     this.style = options.style; 
     this.cumulative = options.cumulative;
-    this.buffer = options.buffer || 20; 
+    this.res = window.devicePixelRatio || 1;
+    this.buffer = (options.buffer || 20); 
 
     this.sprites = {};
     //this.inherited(arguments);
@@ -158,15 +159,9 @@ var TileCubeLayer = declare(CanvasTileLayer, {
     var start = Date.now();
     var self = this;
     var context = canvas.getContext('2d');
+    //context.scale(2, 2);
     var width = canvas.width, height=canvas.height;
-    //console.log(width, height);
-
     context.clearRect(0, 0, width, height);
-
-    if (this.hidpi) {
-      width *= (1/window.devicePixelRatio);
-      height *= (1/window.devicePixelRatio);
-    }
 
     if ( this.temporal === true ) {
       var time = self.endTime;
@@ -214,21 +209,13 @@ var TileCubeLayer = declare(CanvasTileLayer, {
     if ( !this.sprites[point.v] ) {
       this._generateSprite(point);
     }
-
-    var x = parseInt(point.x);
-    var y = parseInt(point.y);
-    if ( this.hidpi ) {
-      x *= 2;
-      y *= 2;
-    }
-
+    var x = parseInt(point.x) * this.res;
+    var y = parseInt(point.y) * this.res;
     x += this.buffer;
     y += this.buffer;
     var xOff = this.sprites[point.v].width/2;
     var yOff = this.sprites[point.v].height/2;
-    //console.log(xOff, yOff)
     context.drawImage(this.sprites[point.v], x-xOff, y-yOff);    
-
   },
 
   _generateSprite: function(point) {
@@ -236,8 +223,8 @@ var TileCubeLayer = declare(CanvasTileLayer, {
     var r = style.radius;
 
     var canvas = document.createElement('canvas');
-    canvas.width = style.radius * 2;
-    canvas.height = style.radius * 2;
+    canvas.width = (r * 2) * this.res;
+    canvas.height = (r * 2) * this.res;
     var context = canvas.getContext('2d');
 
     context.arc(r, r, r, 0, 2 * Math.PI, false);

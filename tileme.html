@@ -183,15 +183,17 @@
             if ( canvasSupport ) {
               layer = new TileCubeLayer(tileDir+'/{level}/{col}/{row}.json', {
                 tileType: 'canvas',
-                hidpi: false, 
+                //hidpi: true, 
                 temporal: true,
                 startTime: 0,
                 endTime: Math.round(config[tileDir].max / 15),
                 cumulative: ( config[tileDir].range ) ? true : false,
                 style: function(val) {
                   return {
-                    fillStyle: "#fdf39b",
-                    radius: 1.5
+                    fillStyle: '#0C56AB',
+                    strokeStyle: '#fff',
+                    lineWidth: 1,
+                    radius: 6
                   }; 
                 }
               });

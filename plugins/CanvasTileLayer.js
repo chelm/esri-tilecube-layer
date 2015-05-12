@@ -175,7 +175,6 @@ var CanvasTileLayer = declare(TiledMapServiceLayer, {
   // override this method to create canvas elements instead of img
   _addImage: function(level, row, r, col, c, id, tileW, tileH, opacity, tile, offsets){
     var self = this;
-
     tileW += this.buffer*2,
     tileH += this.buffer*2;
 
@@ -191,9 +190,13 @@ var CanvasTileLayer = declare(TiledMapServiceLayer, {
     var left = ((tileW-(this.buffer*2)) * col) - (offsets.x), top = ((tileH-(this.buffer*2)) * row) - (offsets.y),
         map = this._map, names = esriNS._css.names,
         css = {
-          width: tileW + "px",
-          height: tileH + "px"
+          width: (tileW) + "px",
+          height: (tileH) + "px",
+          //border: '1px solid blue'
         };
+
+    tileW *= this.res;
+    tileH *= this.res;
 
     canvas.width = tileW;
     canvas.height = tileH;
