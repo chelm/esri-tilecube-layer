@@ -179,6 +179,8 @@
 
           function mapLoaded() {
 
+            var style = new Function('val', config[tileDir].style);
+
             // Add raster layer
             if ( canvasSupport ) {
               layer = new TileCubeLayer(tileDir+'/{level}/{col}/{row}.json', {
@@ -188,16 +190,8 @@
                 startTime: 0,
                 endTime: Math.round(config[tileDir].max / 15),
                 cumulative: ( config[tileDir].range ) ? true : false,
-                style: function(val) {
-                  return {
-                    fillStyle: '#0C56AB',
-                    strokeStyle: '#fff',
-                    lineWidth: 1,
-                    radius: 6
-                  }; 
-                }
+                style: style
               });
-
               map.addLayer(layer);
 
               if ( config[tileDir].range ) {
@@ -218,6 +212,7 @@
                 slide: function( event, ui ) {
 
                   if ( config[tileDir].range ) {
+
                     var start = parseInt(ui.values[ 0 ]);
                     var startDate = moment( config[tileDir].start ).add(start, 'days').format('MMM DD, YYYY');
                     $('#start-date').html(startDate);
@@ -235,6 +230,8 @@
                     
                     $('#end-date').html(endDate);
                     layer.endTime = end;
+
+                    window.value = end;
                   }
 
                   layer._update();
@@ -269,7 +266,7 @@
                 $('#from-to').hide();
               } else {
                 $('#play-btn').hide();
-              }
+              } 
 
               $('#play-btn').on('click', function() {
 
@@ -278,6 +275,8 @@
                   window.playInterval = setInterval(function(){
                     //console.log('window.value', window.value);
                     window.value = window.value || 0;
+                    if ( window.value === config[tileDir].max ) window.value = 0;
+
                     $("#slider").slider('value',window.value);
                     $('#slider').trigger('slidechange');
                     window.value++;

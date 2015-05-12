@@ -219,7 +219,8 @@ var TileCubeLayer = declare(CanvasTileLayer, {
   },
 
   _generateSprite: function(point) {
-    var style = this.style(parseInt(point.v));
+    var val = (isNaN(parseInt(point.v))) ? point.v : parseInt(point.v);
+    var style = this.style(val);
     var r = style.radius;
 
     var canvas = document.createElement('canvas');

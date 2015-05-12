@@ -280,6 +280,7 @@
               temporal: true,
               startTime: 0,
               endTime: 4000,
+              cumulative: true,
               style: function(val) {
                 var color;
                 switch(true) {
@@ -369,7 +370,6 @@
                 
                 $('#start-date').html(startDate);
                 $('#end-date').html(endDate);
-
 
                 layer.startTime = start;
                 layer.endTime = end;
