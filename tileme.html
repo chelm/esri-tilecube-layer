@@ -179,6 +179,8 @@
 
           function mapLoaded() {
 
+            var style = new Function('val', config[tileDir].style);
+
             // Add raster layer
             if ( canvasSupport ) {
               layer = new TileCubeLayer(tileDir+'/{level}/{col}/{row}.json', {
@@ -188,13 +190,10 @@
                 startTime: 0,
                 endTime: Math.round(config[tileDir].max / 15),
                 cumulative: ( config[tileDir].range ) ? true : false,
-                style: function() {
-                  return {
-                    fillStyle: "#FFF",
-                    radius: 3
-                  }; 
-                }
+                style: style
               });
+
+              console.log('style', style("S"));
 
               map.addLayer(layer);
 
@@ -234,6 +233,8 @@
                     
                     $('#end-date').html(endDate);
                     layer.endTime = end;
+
+                    window.value = end;
                   }
 
                   layer._update();
@@ -277,6 +278,8 @@
                   window.playInterval = setInterval(function(){
                     //console.log('window.value', window.value);
                     window.value = window.value || 0;
+                    if ( window.value === config[tileDir].max ) window.value = 0;
+
                     $("#slider").slider('value',window.value);
                     $('#slider').trigger('slidechange');
                     window.value++;
