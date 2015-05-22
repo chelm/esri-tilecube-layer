@@ -202,9 +202,9 @@
                 buildHistogram(layer);
               });
 
-              map.on('extent-change', function() {
-                buildHistogram(layer);
-              });
+              //map.on('extent-change', function() {
+              //  buildHistogram(layer);
+              //});
 
               if ( config[tileDir].range ) {
                 var startDate = moment( config[tileDir].start ).format('MMM DD, YYYY');
@@ -302,7 +302,6 @@
 
               function buildHistogram(layer) {
                 //if ( window._isHistogram ) return;
-                //console.log('create histogram');
 
                 $('#histogram').empty();
 
