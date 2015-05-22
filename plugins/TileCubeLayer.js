@@ -42,6 +42,7 @@ var TileCubeLayer = declare(CanvasTileLayer, {
       self.emit('tiles-loaded', this);
     });
     this.temporal = (options.temporal === false) ? false : true;
+    this.aggregation = (!options.aggregation || options.aggregation === false) ? false : true;
     this.startTime = options.startTime || 0;
     this.endTime = options.endTime || 10;
     this.style = options.style; 
@@ -66,10 +67,8 @@ var TileCubeLayer = declare(CanvasTileLayer, {
         if (!err && tileJson){
           try {
             self.tileQ.defer(function(id, callback){
-              console.log('try')
               setTimeout(function() {
                 try {
-                  console.log('render?!');
                   self._render(element, tileJson, function(){
                     callback(null, null);
                   });  
@@ -101,7 +100,11 @@ var TileCubeLayer = declare(CanvasTileLayer, {
       try { 
         var json = JSON.parse(_xhr.response);
         if ( json ) {
-          callback(null, self._processData(json));   
+          if (self.aggregation){
+            callback(null, json);   
+          } else {
+            callback(null, self._processData(json));   
+          }
         }
       } catch(e){
         //console.log(e);
@@ -164,7 +167,7 @@ var TileCubeLayer = declare(CanvasTileLayer, {
     //context.scale(2, 2);
     var width = canvas.width, height=canvas.height;
     context.clearRect(0, 0, width, height);
-    console.log('RENDER ME');
+    //console.log('RENDER ME', this.aggregation);
 
     if ( this.temporal === true ) {
       var time = self.endTime;
@@ -196,6 +199,12 @@ var TileCubeLayer = declare(CanvasTileLayer, {
           }
         }
       }
+    } else if (this.aggregation) {
+      for (var i = 0; i < tile.length; i++){
+        //for (var d in tile[i].d){ 
+          this._renderPoint( {x: tile[i].x, y: tile[i].y, v: tile[i].t}, context);
+        //}
+      }
     } else {
       
       for (var time in tile){
@@ -209,16 +218,17 @@ var TileCubeLayer = declare(CanvasTileLayer, {
   },
 
   _renderPoint: function(point, context){
-    if ( !this.sprites[point.v] ) {
+    var v = point.v;
+    if ( !this.sprites[v] ) {
       this._generateSprite(point);
     }
     var x = parseInt(point.x) * this.res;
     var y = parseInt(point.y) * this.res;
     x += this.buffer;
     y += this.buffer;
-    var xOff = this.sprites[point.v].width/2;
-    var yOff = this.sprites[point.v].height/2;
-    context.drawImage(this.sprites[point.v], x-xOff, y-yOff);    
+    var xOff = this.sprites[v].width/2;
+    var yOff = this.sprites[v].height/2;
+    context.drawImage(this.sprites[v], x-xOff, y-yOff);    
   },
 
   _generateSprite: function(point) {

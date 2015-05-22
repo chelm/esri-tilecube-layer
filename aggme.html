@@ -190,6 +190,7 @@
               layer = new TileCubeLayer(tileDir+'/{level}/{col}/{row}.json', {
                 tileType: 'canvas',
                 temporal: false,
+                aggregation: true,
                 style: style
               });
               map.addLayer(layer);

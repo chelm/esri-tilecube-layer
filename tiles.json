@@ -38,9 +38,9 @@
       "start": "Jan 01, 2003",
       "step": 1,
       "range":false,
-      "zoom": 14,
+      "zoom": 12,
       "lat": 37.77,
       "lon": -122.4,
-      "style": "var color ='rgb(87,214,241)'; return {fillStyle: color,radius: 4};"
+      "style": "var colors = d3.scale.quantile().domain([0, 500]).range(['#fff', '#6caa00', '#b5d400', '#ffff00', '#ffc200', '#ff7f00', '#ff0000']); var sizes = d3.scale.quantile().domain([0, 500]).range([.5,2,3,4,5,7]); return {fillStyle: colors(val), radius: sizes(val)};"
     }
 }

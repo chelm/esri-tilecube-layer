@@ -187,7 +187,7 @@ var CanvasTileLayer = declare(TiledMapServiceLayer, {
     canvas.id = id;
     domClass.add(canvas, "layerTile");
 
-    var left = ((tileW-(this.buffer*2)) * col) - (offsets.x), top = ((tileH-(this.buffer*2)) * row) - (offsets.y),
+    var left = ((tileW-(this.buffer*2)) * col) - (offsets.x-(this.buffer/2)), top = ((tileH-(this.buffer*2)) * row) - (offsets.y-(this.buffer/2)),
         map = this._map, names = esriNS._css.names,
         css = {
           width: (tileW) + "px",
