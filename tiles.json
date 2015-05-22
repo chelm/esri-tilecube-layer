@@ -33,5 +33,14 @@
       "lat": 37.77,
       "lon": -122.4,
       "style": "var color ='rgb(87,214,241)'; return {fillStyle: color,radius: 4};"
+    },
+    "sfcrimeagg": {
+      "start": "Jan 01, 2003",
+      "step": 1,
+      "range":false,
+      "zoom": 14,
+      "lat": 37.77,
+      "lon": -122.4,
+      "style": "var color ='rgb(87,214,241)'; return {fillStyle: color,radius: 4};"
     }
 }

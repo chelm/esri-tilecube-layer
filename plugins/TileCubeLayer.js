@@ -66,8 +66,10 @@ var TileCubeLayer = declare(CanvasTileLayer, {
         if (!err && tileJson){
           try {
             self.tileQ.defer(function(id, callback){
+              console.log('try')
               setTimeout(function() {
                 try {
+                  console.log('render?!');
                   self._render(element, tileJson, function(){
                     callback(null, null);
                   });  
@@ -162,6 +164,7 @@ var TileCubeLayer = declare(CanvasTileLayer, {
     //context.scale(2, 2);
     var width = canvas.width, height=canvas.height;
     context.clearRect(0, 0, width, height);
+    console.log('RENDER ME');
 
     if ( this.temporal === true ) {
       var time = self.endTime;
