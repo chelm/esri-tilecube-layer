@@ -52,7 +52,7 @@
       #slider-container {
         width: 85%;
         margin: auto;
-        margin-top:15px;
+        margin-top:5px;
         margin-bottom:15px;
       }
 
@@ -60,7 +60,11 @@
         width:100%;
         pointer-events:auto;
       }
-
+      #histogram {
+        width: 85%;
+        margin: auto;
+      }
+      
       #date-range {
         width:100%;
         text-align: center;
@@ -194,6 +198,14 @@
               });
               map.addLayer(layer);
 
+              layer.on("tiles-loaded", function(){
+                buildHistogram(layer);
+              });
+
+              map.on('extent-change', function() {
+                buildHistogram(layer);
+              });
+
               if ( config[tileDir].range ) {
                 var startDate = moment( config[tileDir].start ).format('MMM DD, YYYY');
                 $('#start-date').html(startDate);
@@ -288,6 +300,76 @@
                 }
               });
 
+              function buildHistogram(layer) {
+                //if ( window._isHistogram ) return;
+                //console.log('create histogram');
+
+                $('#histogram').empty();
+
+                var values = [];
+
+                for ( var i = 0; i <= config[tileDir].max; i++ ) {
+                  values.push(0);
+                };
+
+                _.forEach(layer._tileData, function(n, key) {
+                  _.forEach(n.histograms, function(t, i) {
+                    _.forEach(t, function(val, f) {
+                      if ( values[i] !== undefined ) {
+                        values[i] += val;
+                      }
+                    });
+                  });
+                });
+
+                var nbins = 700;
+                var step = parseInt(values.length / 700);
+                var interval = 0;
+                var cnt = 0;
+
+                var bins = [];
+                _.each(values, function(val, i) {
+                  if (i < interval) {
+                    cnt += val;
+                  } else {
+                    bins.push(cnt);
+                    interval = interval + step;
+                    cnt = 0;
+                  }
+                });
+
+                var max = _.max(bins);
+                var divider = Math.floor(max / 30);
+
+                var width = $('#histogram').width(),
+                  height = 30,
+                  barPadding = 1;
+
+                var svg = d3.select("#histogram").append("svg")
+                    .attr("width", width)
+                    .attr("height", height);
+
+                svg.selectAll("rect")
+                  .data(bins)
+                .enter()
+                  .append("rect")
+                  .attr("x", function(d, i) {
+                    return i * (width / bins.length);
+                  })
+                  .attr("y", function(d) {
+                    return height - (d / divider);
+                  })
+                  .attr("width", width / bins.length - barPadding)
+                  .attr("height", function(d) {
+                    return d / divider;
+                  });
+
+                window._isHistogram = true;
+
+              }
+
+              //buildHistogram();
+
             } else {
               dom.byId("mapCanvas").innerHTML = "This browser doesn't support canvas. Visit <a target='_blank' href='http://www.caniuse.com/#search=canvas'>caniuse.com</a> for supported browsers";
             }
@@ -311,6 +393,7 @@
         <div id="date-range">
           <span class="date" id="start-date"></span> <span id="from-to">-</span> <span class="date" id="end-date"></span>
         </div>
+        <div id="histogram"></div>
         <div id="slider-container">
           <div id="play-btn">play</div>
           <div id="slider"></div>
