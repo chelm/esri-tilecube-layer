@@ -161,21 +161,21 @@
           
           var tiles = new WebTiledLayer("http://{s}.basemaps.cartocdn.com/dark_nolabels/${level}/${col}/${row}.png");
           //http://d.tile.stamen.com/terrain/12/656/1583.jpg
+          
+          var tileDir = location.hash.replace(/\#/g, '');
+          if ( tileDir === "" ) tileDir = "tornadoes";
 
           map = new Map("mapCanvas", {
-            center: [-99.076, 38.132],
-            zoom: 5,
-            maxZoom: 8,
-            minZoom: 2,
+            center: [config[tileDir].lon || -99.076, config[tileDir].lat || 38.132],
+            zoom: config[tileDir].zoom || 5,
+            maxZoom: 14,
+            minZoom: 3,
             basemap: "dark-gray"
           });
 
           //map.addLayer(tiles);
 
           map.on("load", mapLoaded);
-
-          var tileDir = location.hash.replace(/\#/g, '');
-          if ( tileDir === "" ) tileDir = "tornadoes";
 
           function mapLoaded() {
 

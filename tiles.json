@@ -14,5 +14,24 @@
       "max": 1443,
       "range": false,
       "style": "var color; switch(true) {case val === 'T':color ='rgb(243,61,65)';case val === 'S':color ='rgb(64,159,221)';break;case val === 'R':color ='rgb(87,214,141)';break;default:color ='rgb(250,250,250)';}return {fillStyle: color,radius: 6};"
+    },
+    "quakes": {
+      "start": "Jan 01, 2010",
+      "step": 1,
+      "min":0,
+      "max": 1950,
+      "range":true,
+      "style": "var color ='rgb(87,214,141)'; return {fillStyle: color,radius: 7};"
+    },
+    "sfcrime": {
+      "start": "Jan 01, 2003",
+      "step": 1,
+      "min":0,
+      "max": 4494,
+      "range":false,
+      "zoom": 14,
+      "lat": 37.77,
+      "lon": -122.4,
+      "style": "var color ='rgb(87,214,241)'; return {fillStyle: color,radius: 4};"
     }
 }
