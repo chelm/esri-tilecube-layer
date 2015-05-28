@@ -273,6 +273,8 @@
 
         function mapLoaded() {
 
+          map.disableScrollWheelZoom();
+          
           // Add raster layer
           if ( canvasSupport ) {
             layer = new TileCubeLayer('/tiles/{level}/{col}/{row}.json', {
