@@ -196,6 +196,7 @@
                 cumulative: ( config[tileDir].range ) ? true : false,
                 style: style
               });
+
               map.addLayer(layer);
 
               layer.on("tiles-loaded", function(){
@@ -211,10 +212,11 @@
                 $('#start-date').html(startDate);
               }
 
-              var endDate = moment( config[tileDir].start ).add(Math.round(config[tileDir].max / 15), 'days').format('MMM DD, YYYY');
+              var res = config[tileDir].res || "days";
+              var endDate = moment( config[tileDir].start ).add(Math.round(config[tileDir].max / 15), res).format('MMM DD, YYYY');
               $('#end-date').html(endDate);
 
-            
+              
               $( "#slider" ).slider({
                 range: config[tileDir].range,
                 min: config[tileDir].min,
@@ -226,19 +228,19 @@
                   if ( config[tileDir].range ) {
 
                     var start = parseInt(ui.values[ 0 ]);
-                    var startDate = moment( config[tileDir].start ).add(start, 'days').format('MMM DD, YYYY');
+                    var startDate = moment( config[tileDir].start ).add(start, res).format('MMM DD, YYYY');
                     $('#start-date').html(startDate);
                     layer.startTime = start;
 
                     var end = parseInt(ui.values[ 1 ]);
-                    var endDate = moment( config[tileDir].start ).add(end, 'days').format('MMM DD, YYYY');
+                    var endDate = moment( config[tileDir].start ).add(end, res).format('MMM DD, YYYY');
                     
                     $('#end-date').html(endDate);
                     layer.endTime = end;
                     
                   } else {
                     var end = parseInt(ui.value);
-                    var endDate = moment( config[tileDir].start ).add(end, 'days').format('MMM DD, YYYY');
+                    var endDate = moment( config[tileDir].start ).add(end, res).format('MMM DD, YYYY');
                     
                     $('#end-date').html(endDate);
                     layer.endTime = end;
@@ -252,19 +254,19 @@
 
                   if ( config[tileDir].range ) {
                     var start = parseInt(ui.values[ 0 ]);
-                    var startDate = moment( config[tileDir].start ).add(start, 'days').format('MMM DD, YYYY');
+                    var startDate = moment( config[tileDir].start ).add(start, res).format('MMM DD, YYYY');
                     $('#start-date').html(startDate);
                     layer.startTime = start;
 
                     var end = parseInt(ui.values[ 1 ]);
-                    var endDate = moment( config[tileDir].start ).add(end, 'days').format('MMM DD, YYYY');
+                    var endDate = moment( config[tileDir].start ).add(end, res).format('MMM DD, YYYY');
                     
                     $('#end-date').html(endDate);
                     layer.endTime = end;
                     
                   } else {
                     var end = parseInt(ui.value);
-                    var endDate = moment( config[tileDir].start ).add(end, 'days').format('MMM DD, YYYY');
+                    var endDate = moment( config[tileDir].start ).add(end, res).format('MMM DD, YYYY');
                     
                     $('#end-date').html(endDate);
                     layer.endTime = end;
@@ -280,6 +282,8 @@
                 $('#play-btn').hide();
               } 
 
+              var interval = config[tileDir].interval || 10;
+              
               $('#play-btn').on('click', function() {
 
                 if ( !window.playInterval ) { 
@@ -287,12 +291,12 @@
                   window.playInterval = setInterval(function(){
                     //console.log('window.value', window.value);
                     window.value = window.value || 0;
-                    if ( window.value === config[tileDir].max ) window.value = 0;
+                    if ( window.value === config[tileDir].max + 1 ) window.value = 0;
 
                     $("#slider").slider('value',window.value);
                     $('#slider').trigger('slidechange');
                     window.value++;
-                  }, 10);
+                  }, interval);
                 } else {
                   $('#play-btn').html('play');
                   clearInterval(window.playInterval);

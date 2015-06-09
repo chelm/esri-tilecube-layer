@@ -42,5 +42,17 @@
       "lat": 37.77,
       "lon": -122.4,
       "style": "var colors = d3.scale.quantile().domain([0, 500]).range(['#fff', '#6caa00', '#b5d400', '#ffff00', '#ffc200', '#ff7f00', '#ff0000']); var sizes = d3.scale.quantile().domain([0, 500]).range([.5,2,3,4,5,7]); return {fillStyle: colors(val), radius: sizes(val)};"
+    },
+    "precip": {
+      "start": "MAY 31, 2010",
+      "step": 1,
+      "max": 5,
+      "res": "years",
+      "range":false,
+      "zoom": 6,
+      "lat": 31.4,
+      "lon": -100.0,
+      "interval": 500,
+      "style": "var colors = d3.scale.quantile().domain([0, 15]).range(['#fff', '#6caa00', '#b5d400', '#ffff00', '#ffc200', '#ff7f00', '#ff0000']); var sizes = d3.scale.quantile().domain([0, 15]).range([.5,2,3,4,5,7]); return {fillStyle: colors(val), radius: sizes(val)};"
     }
 }

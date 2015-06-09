@@ -44,7 +44,7 @@ var TileCubeLayer = declare(CanvasTileLayer, {
     this.temporal = (options.temporal === false) ? false : true;
     this.aggregation = (!options.aggregation || options.aggregation === false) ? false : true;
     this.startTime = options.startTime || 0;
-    this.endTime = options.endTime || 10;
+    this.endTime = (!options.endTime && options.endTime !== 0) ? 10 : options.endTime;
     this.style = options.style; 
     this.cumulative = options.cumulative;
     this.res = window.devicePixelRatio || 1;
