@@ -228,7 +228,13 @@ var TileCubeLayer = declare(CanvasTileLayer, {
     y += this.buffer;
     var xOff = this.sprites[v].width/2;
     var yOff = this.sprites[v].height/2;
-    context.drawImage(this.sprites[v], x-xOff, y-yOff);    
+    //console.log('this.sprites', this.sprites);
+    try {
+      context.drawImage(this.sprites[v], x-xOff, y-yOff);    
+    }
+    catch (err) {
+      console.log('err', err);
+    }
   },
 
   _generateSprite: function(point) {
