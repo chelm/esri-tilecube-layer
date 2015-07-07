@@ -190,7 +190,8 @@
               layer = new TileCubeLayer(tileDir+'/{level}/{col}/{row}.json', {
                 tileType: 'canvas',
                 //hidpi: true, 
-                temporal: true,
+                temporal: (config[tileDir].temporal || !config[tileDir].aggregation) ? true : false,
+                aggregation: (config[tileDir].aggregation) ? true : false,
                 startTime: 0,
                 endTime: Math.round(config[tileDir].max / 15),
                 cumulative: ( config[tileDir].range ) ? true : false,

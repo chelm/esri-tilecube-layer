@@ -41,6 +41,7 @@ var TileCubeLayer = declare(CanvasTileLayer, {
     this.tileQ.awaitAll(function() { 
       self.emit('tiles-loaded', this);
     });
+    console.log('options', options);
     this.temporal = (options.temporal === false) ? false : true;
     this.aggregation = (!options.aggregation || options.aggregation === false) ? false : true;
     this.startTime = options.startTime || 0;

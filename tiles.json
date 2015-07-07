@@ -37,6 +37,7 @@
     "sfcrimeagg": {
       "start": "Jan 01, 2003",
       "step": 1,
+      "aggregation": true,
       "range":false,
       "zoom": 12,
       "lat": 37.77,
