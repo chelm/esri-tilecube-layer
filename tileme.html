@@ -374,6 +374,11 @@
 
               //buildHistogram();
 
+              if ( config[tileDir].aggregation ) {
+                $('#slider-container').hide();
+                $('#date-range').html('aggregation demo');
+              }
+
             } else {
               dom.byId("mapCanvas").innerHTML = "This browser doesn't support canvas. Visit <a target='_blank' href='http://www.caniuse.com/#search=canvas'>caniuse.com</a> for supported browsers";
             }
