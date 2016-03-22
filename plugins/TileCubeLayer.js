@@ -13,7 +13,7 @@ define(
   "dojox/gfx/matrix",
   "dojo/has",
   "dojo/string",
-  
+
   "esri/kernel",
   "esri/request",
   "esri/urlUtils",
@@ -21,7 +21,7 @@ define(
   "esri/SpatialReference",
   "esri/geometry/Extent",
   "esri/geometry/Rect",
-  
+
   "plugins/CanvasTileLayer",
   "queue"
 ],
@@ -34,11 +34,11 @@ function(
 
 var TileCubeLayer = declare(CanvasTileLayer, {
   declaredClass: "esri.layers.TileCubeLayer",
-  
+
   constructor: function ( urlTemplate, options) {
     var self = this;
     this.tileQ = queue(4);
-    this.tileQ.awaitAll(function() { 
+    this.tileQ.awaitAll(function() {
       self.emit('tiles-loaded', this);
     });
     console.log('options', options);
@@ -46,10 +46,10 @@ var TileCubeLayer = declare(CanvasTileLayer, {
     this.aggregation = (!options.aggregation || options.aggregation === false) ? false : true;
     this.startTime = options.startTime || 0;
     this.endTime = (!options.endTime && options.endTime !== 0) ? 10 : options.endTime;
-    this.style = options.style; 
+    this.style = options.style;
     this.cumulative = options.cumulative;
     this.res = window.devicePixelRatio || 1;
-    this.buffer = (options.buffer || 20); 
+    this.buffer = (options.buffer || 20);
 
     this.sprites = {};
     //this.inherited(arguments);
@@ -67,21 +67,21 @@ var TileCubeLayer = declare(CanvasTileLayer, {
       this._getTile(this.getTileUrl(level, r, c), function(err, tileJson){
         if (!err && tileJson){
           try {
-            self.tileQ.defer(function(id, callback){
+            //self.tileQ.defer(function(id, callback){
               setTimeout(function() {
                 try {
                   self._render(element, tileJson, function(){
                     callback(null, null);
-                  });  
+                  });
                 } catch(e) {
                   callback(null, null);
                 }
               }, 25);
-            }, id);
+            //}, id);
             // for saving data, store the tile and layers
             self._tileData[id] = tileJson;
           } catch(e){
-             
+
           }
         }
       });
@@ -98,13 +98,13 @@ var TileCubeLayer = declare(CanvasTileLayer, {
     _xhr.open( "GET", url, true );
     _xhr.responseType = "application/json";
     _xhr.onload = function( evt ) {
-      try { 
+      try {
         var json = JSON.parse(_xhr.response);
         if ( json ) {
           if (self.aggregation){
-            callback(null, json);   
+            callback(null, json);
           } else {
-            callback(null, self._processData(json));   
+            callback(null, self._processData(json));
           }
         }
       } catch(e){
@@ -141,13 +141,13 @@ var TileCubeLayer = declare(CanvasTileLayer, {
         if (!tile[step]){
           tile[step] = [];
         }
- 
+
         tile[step].push({
           x: pixel.x,
           y: pixel.y,
           v: val
         });
-        
+
       }
     }
     return tile; //callback(null, tile);
@@ -202,16 +202,16 @@ var TileCubeLayer = declare(CanvasTileLayer, {
       }
     } else if (this.aggregation) {
       for (var i = 0; i < tile.length; i++){
-        //for (var d in tile[i].d){ 
+        //for (var d in tile[i].d){
           this._renderPoint( {x: tile[i].x, y: tile[i].y, v: tile[i].t}, context);
         //}
       }
     } else {
-      
+
       for (var time in tile){
         // parse the renderer into a fill
         for (var i = 0; i < tile[time].length; i++){
-          this._renderPoint( tile[time][i], context); 
+          this._renderPoint( tile[time][i], context);
         }
       }
     }
@@ -231,7 +231,7 @@ var TileCubeLayer = declare(CanvasTileLayer, {
     var yOff = this.sprites[v].height/2;
     //console.log('this.sprites', this.sprites);
     try {
-      context.drawImage(this.sprites[v], x-xOff, y-yOff);    
+      context.drawImage(this.sprites[v], x-xOff, y-yOff);
     }
     catch (err) {
       console.log('err', err);
@@ -255,7 +255,7 @@ var TileCubeLayer = declare(CanvasTileLayer, {
     context.strokeStyle = style.strokeStyle || 'rgb(240,240,240)';
     context.stroke();
     context.beginPath();
-    
+
     this.sprites[point.v] = canvas;
   }
 
@@ -266,5 +266,5 @@ if (has("extend-esri")) {
   lang.setObject("layers.TileCubeLayer", TileCubeLayer, esriNS);
 }
 
-return TileCubeLayer;  
+return TileCubeLayer;
 });

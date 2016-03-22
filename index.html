@@ -37,18 +37,18 @@
       var canvasSupport;
 
       require([
-        "esri/map", 
-        "dojo/dom", 
+        "esri/map",
+        "dojo/dom",
         "plugins/TileCubeLayer",
         "dojo/domReady!"
       ], function(
-        Map, 
-        dom, 
-        TileCubeLayer 
+        Map,
+        dom,
+        TileCubeLayer
       ){
-        // does the browser support canvas? 
+        // does the browser support canvas?
         canvasSupport = supports_canvas();
-        
+
         map = new Map("mapCanvas", {
           center: [-99.076, 38.132],
           zoom: 5,
@@ -63,22 +63,22 @@
           if ( canvasSupport ) {
             layer = new TileCubeLayer('tiles/{level}/{col}/{row}.json', {
               tileType: 'canvas',
-              hidpi: true, 
+              hidpi: true,
               temporal: false,
               style: function (val) {
                 return {
                   radius: val
-                }; 
+                };
               }
             });
             map.addLayer(layer);
-            
+
           } else {
             dom.byId("mapCanvas").innerHTML = "This browser doesn't support canvas. Visit <a target='_blank' href='http://www.caniuse.com/#search=canvas'>caniuse.com</a> for supported browsers";
           }
         }
 
-        // does the browser support canvas? 
+        // does the browser support canvas?
         function supports_canvas() {
           return !!document.createElement("canvas").getContext;
         }
@@ -86,7 +86,7 @@
       });
     </script>
   </head>
-  
+
   <body class="">
      <div id="mapCanvas" style="height:100%;">
      </div>

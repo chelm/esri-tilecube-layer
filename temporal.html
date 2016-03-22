@@ -156,7 +156,7 @@
         margin-right:3px;
         display: inline-block;
         width:10px;
-        height:10px; 
+        height:10px;
       }
       #f0 {
         background:rgb(255,255,178);
@@ -237,14 +237,14 @@
       var canvasSupport;
 
       require([
-        "esri/map", 
-        "dojo/dom", 
+        "esri/map",
+        "dojo/dom",
         "plugins/TileCubeLayer",
         "esri/layers/WebTiledLayer",
         "dojo/domReady!"
       ], function(
-        Map, 
-        dom, 
+        Map,
+        dom,
         TileCubeLayer,
         WebTiledLayer
       ){
@@ -252,9 +252,9 @@
         var height = $(window).height() - 230;
         $('#mapCanvas').css({"height": height + "px"});
 
-        // does the browser support canvas? 
+        // does the browser support canvas?
         canvasSupport = supports_canvas();
-        
+
         var tiles = new WebTiledLayer("http://{s}.basemaps.cartocdn.com/dark_nolabels/${level}/${col}/${row}.png");
         //http://d.tile.stamen.com/terrain/12/656/1583.jpg
 
@@ -274,12 +274,12 @@
         function mapLoaded() {
 
           map.disableScrollWheelZoom();
-          
+
           // Add raster layer
           if ( canvasSupport ) {
             layer = new TileCubeLayer('/tiles/{level}/{col}/{row}.json', {
               tileType: 'canvas',
-              hidpi: false, 
+              hidpi: false,
               temporal: true,
               startTime: 0,
               endTime: 4000,
@@ -311,7 +311,7 @@
                 return {
                   fillStyle: color,
                   radius: val + 1
-                }; 
+                };
               }
             });
 
@@ -357,7 +357,7 @@
                 var percent = (histogram[item] / max) * 100;
                 $($('.hist-item')[item]).css({'height': percent + '%'});
               }
-              
+
             }
 
             $( "#slider" ).slider({
@@ -370,7 +370,7 @@
                 var end = parseInt(ui.values[ 1 ]);
                 var startDate = moment('JAN 01, 1950').add(start, 'days').format('MMM DD, YYYY');
                 var endDate = moment('JAN 01, 1950').add(end, 'days').format('MMM DD, YYYY');
-                
+
                 $('#start-date').html(startDate);
                 $('#end-date').html(endDate);
 
@@ -405,7 +405,7 @@
           }
         }
 
-        // does the browser support canvas? 
+        // does the browser support canvas?
         function supports_canvas() {
           return !!document.createElement("canvas").getContext;
         }
@@ -413,7 +413,7 @@
       });
     </script>
   </head>
-  
+
   <body class="">
      <div id="mapCanvas"></div>
      <div id="footer">
@@ -447,8 +447,8 @@
         <div class="footer-right float-left">
           <div id="title">U.S. Tornadoes (1950 - 2012)</div>
           <div class="blurb">
-            The data visualized are provided by NOAA's Storm Prediction Center and the Tornado History Project. 
-            Data on tornadoes extends back to 1950, with <span class="emph">58,047 tornadoes</span> visualized on this map. Click the legend histogram to filter by tornado Fujita scale. 
+            The data visualized are provided by NOAA's Storm Prediction Center and the Tornado History Project.
+            Data on tornadoes extends back to 1950, with <span class="emph">58,047 tornadoes</span> visualized on this map. Click the legend histogram to filter by tornado Fujita scale.
           </div>
         </div>
       </div>
